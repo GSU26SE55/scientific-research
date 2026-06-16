@@ -1,0 +1,148 @@
+%==============================================================================
+% Section IV: Experiments & Results
+%==============================================================================
+\section{Experiments}
+\label{sec:experiments}
+
+We evaluate [METHOD NAME] across multiple benchmarks to answer the
+following research questions:
+\begin{description}
+  \item[\textbf{RQ1}] Does [METHOD NAME] outperform state-of-the-art
+                     baselines on standard benchmarks?
+  \item[\textbf{RQ2}] How does each component contribute to overall
+                     performance?
+  \item[\textbf{RQ3}] How sensitive is the method to the choice of
+                     hyperparameters?
+  \item[\textbf{RQ4}] What is the computational cost compared to existing
+                     methods?
+\end{description}
+
+% ---- Experimental setup ----------------------------------------------------
+\subsection{Experimental Setup}
+\label{subsec:setup}
+
+\subsubsection{Datasets}
+We evaluate on three public datasets:
+\textbf{[Dataset~1]}~\cite{he2016deep} containing \(N_1\) samples,
+\textbf{[Dataset~2]}~\cite{devlin2019bert} with \(N_2\) samples, and
+\textbf{[Dataset~3]} (proprietary). Standard train/val/test splits are
+used.
+
+\subsubsection{Baselines}
+We compare against [Baseline~1]~\cite{he2016deep},
+[Baseline~2]~\cite{vaswani2017attention}, and
+[Baseline~3]~\cite{devlin2019bert}, covering the most competitive
+approaches in the literature.
+
+\subsubsection{Evaluation Metrics}
+We report \textbf{Accuracy}, \textbf{F1-score}, and \textbf{AUROC} for
+classification, and additionally measure \textbf{Inference Latency} (ms)
+and \textbf{Peak GPU Memory} (GB) for efficiency.
+
+\subsubsection{Implementation Details}
+All models are implemented in PyTorch~1.13 and trained on a single
+NVIDIA~A100 (40\,GB) GPU. We use the AdamW optimizer
+(\(\eta=1\!\times\!10^{-4}\), weight decay \(0.01\)), batch size~\(128\),
+and train for~\(100\) epochs. Hyperparameters are tuned on the validation
+set; \(\tau=0.07\) and \(\lambda=0.5\) yielded the best results.
+
+% ---- Main results ----------------------------------------------------------
+\subsection{Main Results (RQ1)}
+\label{subsec:main-results}
+
+\Cref{tab:main} summarizes our main results. [METHOD NAME] consistently
+outperforms all baselines across the three datasets. On~[Dataset~1], we
+improve top-1 accuracy by \(+2.4\%\) over the strongest baseline.
+
+\begin{table}[t]
+  \caption{Comparison with state-of-the-art on three benchmarks.
+           Best results are in \textbf{bold}.}
+  \label{tab:main}
+  \centering
+  \small
+  \begin{tabular}{lccc}
+    \toprule
+    Method                & Dataset~1 & Dataset~2 & Dataset~3 \\
+    \midrule
+    Baseline~1~\cite{he2016deep}        & 86.1 & 78.3 & 71.2 \\
+    Baseline~2~\cite{vaswani2017attention} & 88.7 & 81.0 & 74.5 \\
+    Baseline~3~\cite{devlin2019bert}    & 89.5 & 82.4 & 75.9 \\
+    \midrule
+    \textbf{[METHOD NAME] (ours)} & \textbf{91.9} & \textbf{85.1} & \textbf{78.6} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% ---- Ablation studies -----------------------------------------------------
+\subsection{Ablation Study (RQ2)}
+\label{subsec:ablation}
+
+We ablate each component to isolate its contribution
+(\Cref{tab:ablation}). Removing [Component~2] degrades accuracy by
+\(-1.8\%\), confirming its importance.
+
+\begin{table}[t]
+  \caption{Ablation study on Dataset~1.}
+  \label{tab:ablation}
+  \centering
+  \small
+  \begin{tabular}{lc}
+    \toprule
+    Variant                                & Accuracy (\%) \\
+    \midrule
+    Full model                             & \textbf{91.9} \\
+    \quad w/o [Component~1]                & 90.4 \\
+    \quad w/o [Component~2]                & 90.1 \\
+    \quad w/o [Component~3]                & 89.7 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% ---- Hyperparameter sensitivity --------------------------------------------
+\subsection{Hyperparameter Sensitivity (RQ3)}
+\label{subsec:hyperparam}
+
+\Cref{fig:sensitivity} shows that performance is stable across a wide
+range of \(\lambda\in[0.1, 1.0]\), indicating robustness to this
+hyperparameter.
+
+% \begin{figure}[t]
+%   \centering
+%   \includegraphics[width=\columnwidth]{sensitivity.pdf}
+%   \caption{Accuracy on Dataset~1 vs.\ trade-off coefficient \(\lambda\).}
+%   \label{fig:sensitivity}
+% \end{figure}
+
+% ---- Efficiency analysis ---------------------------------------------------
+\subsection{Efficiency Analysis (RQ4)}
+\label{subsec:efficiency}
+
+\Cref{tab:efficiency} compares inference latency and memory footprint.
+[METHOD NAME] is~\(1.3\times\) faster than Baseline~3 while using~\(22\%\)
+less GPU memory.
+
+\begin{table}[t]
+  \caption{Inference latency and peak GPU memory.}
+  \label{tab:efficiency}
+  \centering
+  \small
+  \begin{tabular}{lcc}
+    \toprule
+    Method      & Latency (ms) \(\downarrow\) & Memory (GB) \(\downarrow\) \\
+    \midrule
+    Baseline~3  & 24.6 & 6.8 \\
+    \textbf{Ours} & \textbf{18.9} & \textbf{5.3} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% ---- Discussion / qualitative results --------------------------------------
+\subsection{Discussion}
+\label{subsec:discussion}
+
+The gains of [METHOD NAME] are most pronounced on [hard subset], where
+prior methods struggle due to [reason]. Qualitative visualizations
+(\Cref{fig:qualitative}) further confirm that [observation].
+Nonetheless, we observe that the method underperforms when
+[failure mode] --- we discuss potential remedies in
+\Cref{sec:conclusion}.

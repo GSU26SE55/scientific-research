@@ -1,0 +1,50 @@
+%==============================================================================
+% IEEEtran Paper - Main File
+% Compile: pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
+% Or use the included Makefile: `make`
+%==============================================================================
+
+% ---- Document class ---------------------------------------------------------
+% Options:
+%   conference     -> conference paper (default for most submissions)
+%   journal        -> journal/Transactions paper
+%   technote       -> brief technote
+%   peerreview     -> double-spaced peer review
+%   draftcls       -> draft mode (single column, double spaced)
+\documentclass[conference,a4paper,10pt]{IEEEtran}
+
+% ---- Packages ---------------------------------------------------------------
+\input{preamble.tex}
+
+% ---- Metadata (title, authors) ---------------------------------------------
+\input{sections/00_metadata.tex}
+
+%==============================================================================
+\begin{document}
+
+\maketitle
+
+% ---- Abstract & Keywords ---------------------------------------------------
+\input{sections/01_abstract.tex}
+
+% ---- Main body -------------------------------------------------------------
+\input{sections/02_introduction.tex}
+\input{sections/03_related_work.tex}
+\input{sections/04_methodology.tex}
+\input{sections/05_experiments.tex}
+\input{sections/06_conclusion.tex}
+
+% ---- Back matter -----------------------------------------------------------
+\input{sections/07_acknowledgment.tex}
+
+% ---- References ------------------------------------------------------------
+\bibliographystyle{IEEEtran}
+\bibliography{bib/references}
+
+% ---- Appendix (optional) ---------------------------------------------------
+\input{sections/08_appendix.tex}
+
+% ---- Author biography (journal only, comment out for conference) -----------
+% \input{sections/09_biography.tex}
+
+\end{document}

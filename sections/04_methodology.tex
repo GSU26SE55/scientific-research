@@ -1,0 +1,124 @@
+%==============================================================================
+% Section III: Methodology / Proposed Method
+%==============================================================================
+\section{Proposed Method}
+\label{sec:method}
+
+In this section, we first formalize the problem (\Cref{subsec:problem}),
+then describe the overall architecture (\Cref{subsec:overview}), and finally
+detail each component
+(\Cref{subsec:component1,subsec:component2,subsec:training}).
+
+% ---- Problem formulation ---------------------------------------------------
+\subsection{Problem Formulation}
+\label{subsec:problem}
+
+Let \(\mathcal{X}\subseteq\mathbb{R}^{d}\) denote the input space and
+\(\mathcal{Y}\) the label space. Given a training set
+\(\mathcal{D}=\{(x_i,y_i)\}_{i=1}^{N}\) drawn \emph{i.i.d.}\ from an
+unknown distribution \(p(x,y)\), our goal is to learn a function
+\(f_{\theta}:\mathcal{X}\to\mathcal{Y}\) parameterized by~\(\theta\) that
+minimizes the expected risk:
+\begin{equation}
+  \theta^{\star}
+  = \arg\min_{\theta}\;
+    \mathbb{E}_{(x,y)\sim p}\bigl[\,\ell\!\bigl(f_{\theta}(x),\,y\bigr)\bigr],
+  \label{eq:erm}
+\end{equation}
+where \(\ell(\cdot,\cdot)\) is a task-specific loss function.
+
+% ---- Architecture overview -------------------------------------------------
+\subsection{Architecture Overview}
+\label{subsec:overview}
+
+\Cref{fig:overview} illustrates the overall architecture of the proposed
+\textbf{[METHOD NAME]}. The model consists of three modules:
+\textbf{(i)} a [feature extractor],
+\textbf{(ii)} a [novel module~A], and
+\textbf{(iii)} a [novel module~B].
+
+% \begin{figure}[t]
+%   \centering
+%   \includegraphics[width=\columnwidth]{overview.pdf}
+%   \caption{Overall architecture of [METHOD NAME]. The input \(x\) is first
+%            encoded by [encoder], then refined by [module A], and finally
+%            decoded into the prediction \(\hat{y}\).}
+%   \label{fig:overview}
+% \end{figure}
+
+% ---- Component 1 -----------------------------------------------------------
+\subsection{[Component 1: e.g., Adaptive Feature Encoder]}
+\label{subsec:component1}
+
+We design the encoder \(E_{\phi}:\mathcal{X}\to\mathbb{R}^{h}\) to produce
+a latent representation
+\begin{equation}
+  z = E_{\phi}(x),\quad z\in\mathbb{R}^{h}.
+  \label{eq:encoder}
+\end{equation}
+The encoder is implemented as [architectural details]. Compared to the
+standard~\cite{he2016deep}, we introduce [innovation], which enables
+[benefit].
+
+% ---- Component 2 -----------------------------------------------------------
+\subsection{[Component 2: e.g., Contrastive Alignment Module]}
+\label{subsec:component2}
+
+Given a pair of latent vectors \((z_i, z_j)\), we define the alignment
+score as
+\begin{equation}
+  s(z_i, z_j)
+  = \frac{\langle z_i, z_j\rangle}{\lVert z_i\rVert\,\lVert z_j\rVert\,\tau},
+  \label{eq:sim}
+\end{equation}
+where \(\tau>0\) is a temperature hyperparameter. The contrastive loss is
+\begin{equation}
+  \mathcal{L}_{\text{con}}
+  = -\frac{1}{N}\sum_{i=1}^{N}
+    \log\frac{\exp(s(z_i, z_i^{+}))}
+              {\sum_{j=1}^{N}\exp(s(z_i, z_j))}.
+  \label{eq:contrastive}
+\end{equation}
+
+% ---- Training algorithm ----------------------------------------------------
+\subsection{Training Objective and Algorithm}
+\label{subsec:training}
+
+The overall training objective combines a supervised term and the
+contrastive term in~\eqref{eq:contrastive}:
+\begin{equation}
+  \mathcal{L}_{\text{total}}
+  = \mathcal{L}_{\text{sup}}
+    + \lambda \mathcal{L}_{\text{con}},
+  \label{eq:total-loss}
+\end{equation}
+where \(\lambda\geq 0\) controls the trade-off.
+
+\begin{algorithm}[t]
+  \caption{Training procedure of [METHOD NAME]}
+  \label{alg:training}
+  \begin{algorithmic}[1]
+    \Require Dataset \(\mathcal{D}\), learning rate \(\eta\),
+             epochs \(T\), trade-off \(\lambda\)
+    \State Initialize parameters \(\theta\!=\!(\phi,\psi)\)
+    \For{\(t = 1\) to \(T\)}
+      \For{each mini-batch \(\mathcal{B}\subset\mathcal{D}\)}
+        \State Compute \(z = E_{\phi}(x)\) for \(x\in\mathcal{B}\)
+        \State Compute \(\mathcal{L}_{\text{total}}\) via
+               \eqref{eq:total-loss}
+        \State \(\theta \gets \theta - \eta\,\nabla_{\theta}
+               \mathcal{L}_{\text{total}}\)
+      \EndFor
+    \EndFor
+    \State \Return trained parameters \(\theta^{\star}\)
+  \end{algorithmic}
+\end{algorithm}
+
+% ---- Complexity analysis (optional) ----------------------------------------
+\subsection{Complexity Analysis}
+\label{subsec:complexity}
+
+The per-batch time complexity of \Cref{alg:training} is
+\(\mathcal{O}(B\cdot h^{2})\), where \(B\) is the batch size and \(h\)
+the latent dimension. Memory usage scales linearly in \(B\), making the
+method tractable on a single commodity GPU.
