@@ -1,0 +1,69 @@
+%==============================================================================
+% Section VI: Discussion
+%==============================================================================
+\section{Discussion}
+\label{sec:discussion}
+
+In this section, we interpret the empirical findings of
+\Cref{sec:experiments} beyond the raw metrics, situate them with respect
+to prior work, and reflect on the broader implications and threats to the
+validity of our study.
+
+% ---- Interpretation of results --------------------------------------------
+\subsection{Interpretation of Results}
+\label{subsec:interpretation}
+
+The consistent improvements reported in \Cref{tab:main} indicate that
+[key mechanism of METHOD NAME] is the primary driver of performance.
+In particular, the ablation in \Cref{tab:ablation} shows that
+[Component~2] contributes the largest single gain, supporting our
+hypothesis that [the central design principle] is essential for
+[the target property]. The stability observed across the
+hyperparameter sweep (\Cref{subsec:hyperparam}) further suggests that
+the method does not rely on brittle, dataset-specific tuning.
+
+% ---- Comparison with prior work -------------------------------------------
+\subsection{Comparison with Prior Work}
+\label{subsec:comparison}
+
+Unlike prior approaches that rely on [assumption / mechanism in baselines]
+\cite{vaswani2017attention,devlin2019bert}, [METHOD NAME] achieves
+comparable or superior accuracy while [advantage, e.g., reducing
+computational cost]. This aligns with the efficiency results in
+\Cref{tab:efficiency} and reinforces the view that [insight]. Where prior
+methods degrade on [hard regime], our results suggest that
+[explanation grounded in the proposed design].
+
+% ---- Why it works ---------------------------------------------------------
+\subsection{Why Does It Work?}
+\label{subsec:why}
+
+We attribute the observed gains to [mechanistic explanation]. Intuitively,
+[component] allows the model to [behavior], which mitigates
+[the failure mode of baselines]. This interpretation is corroborated by
+the qualitative analysis in \Cref{subsec:discussion} of
+\Cref{sec:experiments}.
+
+% ---- Practical implications -----------------------------------------------
+\subsection{Practical Implications}
+\label{subsec:implications}
+
+From a deployment perspective, the reduced [cost metric] makes
+[METHOD NAME] attractive for [real-world setting], where [constraint]
+typically rules out heavier models. Practitioners can therefore
+[actionable takeaway] without sacrificing predictive quality.
+
+% ---- Threats to validity --------------------------------------------------
+\subsection{Threats to Validity}
+\label{subsec:threats}
+
+Several factors may limit the generality of our conclusions.
+\textbf{Internal validity:} performance may be influenced by the specific
+train/val/test splits; we mitigate this by [reporting mean over multiple
+seeds / standard splits].
+\textbf{External validity:} our evaluation focuses on [scope], and gains
+may not transfer to [other domains / distributions].
+\textbf{Construct validity:} the chosen metrics
+(\Cref{subsec:setup}) capture [aspect] but may not fully reflect
+[real-world objective]. We leave a broader study of these factors to
+future work, discussed next in \Cref{sec:conclusion}.
