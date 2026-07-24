@@ -1,60 +1,293 @@
-% ============================================================================
-% Bibliography in BibTeX format. Compile with IEEEtran.bst (set in main.tex).
-% Tip: keep keys consistent (firstauthorYEARkeyword).
-% ============================================================================
+% =============================================================================
+% Bibliography -- Springer LNCS format.
+% Compile with:  \bibliographystyle{splncs04}   (set in main.tex)
+%
+% splncs04.bst sorts entries alphabetically by author and assigns numeric
+% labels, so the [n] numbers in the PDF are generated automatically -- do not
+% hard-code reference numbers in the text, always use \cite{key}.
+%
+% Key convention: firstauthorYEAR
+% =============================================================================
 
-@article{lecun2015deep,
-  author  = {LeCun, Yann and Bengio, Yoshua and Hinton, Geoffrey},
-  title   = {Deep learning},
-  journal = {Nature},
-  volume  = {521},
-  number  = {7553},
-  pages   = {436--444},
-  year    = {2015},
-  doi     = {10.1038/nature14539}
+% ---- Al-Smadi & Abu Qahouq (2025) -- EIS-based SOH estimation ---------------
+@article{alsmadi2025,
+  author  = {{Al-Smadi}, M. K. and {Abu Qahouq}, J. A.},
+  title   = {State of health estimation for lithium-ion batteries based on
+             transition frequency's impedance and other impedance features
+             with correlation analysis},
+  journal = {Batteries},
+  volume  = {11},
+  number  = {4},
+  eid     = {133},
+  year    = {2025},
+  doi     = {10.3390/batteries11040133}
 }
 
-@inproceedings{he2016deep,
-  author    = {He, Kaiming and Zhang, Xiangyu and Ren, Shaoqing and Sun, Jian},
-  title     = {Deep Residual Learning for Image Recognition},
-  booktitle = {Proc. IEEE Conf. Comput. Vis. Pattern Recognit. (CVPR)},
-  pages     = {770--778},
-  year      = {2016}
+% ---- Aljohani (2026) -- Markov-constrained Isolation Forest ----------------
+@article{aljohani2026,
+  author  = {Aljohani, T. M.},
+  title   = {Markov-constrained isolation forest for early detection of
+             battery anomalies in solar-grid applications},
+  journal = {Mathematics},
+  volume  = {14},
+  number  = {7},
+  eid     = {1192},
+  year    = {2026},
+  doi     = {10.3390/math14071192}
 }
 
-@inproceedings{vaswani2017attention,
-  author    = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and
-               Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and
-               Kaiser, {\L}ukasz and Polosukhin, Illia},
-  title     = {Attention Is All You Need},
-  booktitle = {Proc. Adv. Neural Inf. Process. Syst. (NeurIPS)},
-  pages     = {5998--6008},
-  year      = {2017}
+% ---- Arbaoui et al. (2024) -- SOH prediction + anomaly detection -----------
+@article{arbaoui2024,
+  author  = {Arbaoui, S. and Samet, A. and Ayadi, A. and Mesbahi, T. and
+             Bon{\'e}, R.},
+  title   = {Data-driven strategy for state of health prediction and anomaly
+             detection in lithium-ion batteries},
+  journal = {Energy and AI},
+  volume  = {17},
+  eid     = {100413},
+  year    = {2024},
+  doi     = {10.1016/j.egyai.2024.100413}
 }
 
-@inproceedings{devlin2019bert,
-  author    = {Devlin, Jacob and Chang, Ming-Wei and Lee, Kenton and
-               Toutanova, Kristina},
-  title     = {{BERT}: Pre-training of Deep Bidirectional Transformers
-               for Language Understanding},
-  booktitle = {Proc. Annu. Conf. North Am. Chapter Assoc. Comput. Linguist.
-               (NAACL-HLT)},
-  pages     = {4171--4186},
-  year      = {2019}
+% ---- Crippa et al. (2024) -- EDGAR GHG emissions report --------------------
+% NOTE: crippa2024 is a 16-author JRC/EDGAR institutional report; its long
+% author list is abbreviated with `et al.' (via "and others") to respect the
+% page limit -- standard practice for large-team technical reports. To restore
+% the full list, replace "and others" with the remaining 13 author names.
+% (BibTeX does NOT allow % comments *inside* an entry, so this note lives here.)
+@techreport{crippa2024,
+  author      = {Crippa, M. and Guizzardi, D. and Pagani, F. and others},
+  title       = {{GHG} emissions of all world countries},
+  number      = {JRC138862},
+  institution = {Publications Office of the European Union},
+  address     = {Luxembourg},
+  year        = {2024},
+  url         = {https://edgar.jrc.ec.europa.eu/report_2024}
 }
 
-@book{goodfellow2016deep,
-  author    = {Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron},
-  title     = {Deep Learning},
-  publisher = {MIT Press},
-  address   = {Cambridge, MA, USA},
-  year      = {2016}
+% ---- Ghafari et al. (2023) -- Li-ion battery review ------------------------
+% NOTE: the DOI below (prefix 10.0000) was taken verbatim from the source
+% manuscript and appears to be a placeholder. Please verify before submission;
+% if it cannot be confirmed, delete the `doi' field.
+@article{ghafari2023,
+  author  = {Ghafari, A. and Bayat, V. and Akbari, S. and Yeklangi, A. G.},
+  title   = {Current and future prospects of {Li}-ion batteries: A review},
+  journal = {NanoSci Technol},
+  volume  = {8},
+  pages   = {24--43},
+  year    = {2023},
+  doi     = {10.0000/jnanoscitec.2023}
 }
 
-@misc{openai2023gpt4,
-  author       = {{OpenAI}},
-  title        = {{GPT}-4 Technical Report},
-  howpublished = {\url{https://arxiv.org/abs/2303.08774}},
-  year         = {2023},
-  note         = {Accessed: 2026-06-16}
+% ---- Gu & Dao (2023) -- Mamba ---------------------------------------------
+@misc{gu2023,
+  author       = {Gu, A. and Dao, T.},
+  title        = {Mamba: Linear-time sequence modeling with selective state
+                  spaces},
+  howpublished = {arXiv:2312.00752},
+  year         = {2023}
+}
+
+% ---- Huang (2025) -- Li-Mamba ---------------------------------------------
+@article{huang2025,
+  author  = {Huang, T.},
+  title   = {{Li-Mamba}: A linear state-space sequence model for real-time
+             battery state-of-charge estimation},
+  journal = {IAENG International Journal of Applied Mathematics},
+  volume  = {55},
+  number  = {11},
+  year    = {2025},
+  url     = {https://www.iaeng.org/IJAM/issues_v55/issue_11/IJAM_55_11_28.pdf}
+}
+
+% ---- International Energy Agency (2023) -- Global EV Outlook --------------
+@techreport{iea2023,
+  author      = {{International Energy Agency}},
+  title       = {Global {EV} Outlook 2023},
+  institution = {International Energy Agency},
+  address     = {Paris},
+  year        = {2023},
+  url         = {https://www.iea.org/reports/global-ev-outlook-2023}
+}
+
+% ---- Liu, Ting & Zhou (2008) -- Isolation Forest --------------------------
+@inproceedings{liu2008,
+  author    = {Liu, F. T. and Ting, K. M. and Zhou, Z.-H.},
+  title     = {Isolation forest},
+  booktitle = {2008 Eighth IEEE International Conference on Data Mining},
+  pages     = {413--422},
+  publisher = {IEEE},
+  year      = {2008},
+  doi       = {10.1109/ICDM.2008.17}
+}
+
+% ---- Meng et al. (2026) -- Multimodal Mamba (HSSA) ------------------------
+@article{meng2026,
+  author  = {Meng, Y. and Sun, Q. and Xu, J. and Bian, A. and Yang, Q. and
+             Wang, Z. and Yang, Z. and Zhi, M.},
+  title   = {Multimodal state of health prediction for lithium-ion batteries
+             via {Mamba}-based fusion of discharge curves and impedance
+             spectra},
+  journal = {Batteries},
+  volume  = {12},
+  number  = {6},
+  eid     = {196},
+  year    = {2026},
+  doi     = {10.3390/batteries12060196}
+}
+
+% ---- Nie et al. (2023) -- PatchTST ----------------------------------------
+@inproceedings{nie2023,
+  author    = {Nie, Y. and Nguyen, N. H. and Sinthong, P. and
+               Kalagnanam, J.},
+  title     = {A time series is worth 64 words: Long-term forecasting with
+               {Transformers}},
+  booktitle = {International Conference on Learning Representations
+               (ICLR 2023)},
+  year      = {2023}
+}
+
+% ---- Olalde-Verano et al. (2024) -- SambaMixer ----------------------------
+@article{olalde2024,
+  author  = {{Olalde-Verano}, J. I. and Kirch, S. and {P{\'e}rez-Molina}, C.
+             and Martin, S.},
+  title   = {{SambaMixer}: State of health prediction of {Li}-ion batteries
+             using {Mamba} state space models},
+  journal = {IEEE Access},
+  volume  = {13},
+  pages   = {2313--2327},
+  year    = {2024},
+  doi     = {10.1109/ACCESS.2024.3524321}
+}
+
+% ---- Patel et al. (2025) -- TIDSIT ---------------------------------------
+@misc{patel2025,
+  author       = {Patel, J. M. and Ramezankhani, M. and Deodhar, A. and
+                  Birru, D.},
+  title        = {State of health estimation of batteries using a
+                  time-informed dynamic sequence-inverted transformer},
+  howpublished = {arXiv:2507.18320},
+  year         = {2025}
+}
+
+% ---- Perez et al. (2018) -- FiLM -----------------------------------------
+@inproceedings{perez2018,
+  author    = {Perez, E. and Strub, F. and de Vries, H. and Dumoulin, V. and
+               Courville, A.},
+  title     = {{FiLM}: Visual reasoning with a general conditioning layer},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume    = {32},
+  number    = {1},
+  year      = {2018},
+  doi       = {10.1609/aaai.v32i1.11671}
+}
+
+% ---- Richardson, Osborne & Howey (2017) -- GP regression for SOH ---------
+@article{richardson2017,
+  author  = {Richardson, R. R. and Osborne, M. A. and Howey, D. A.},
+  title   = {Gaussian process regression for forecasting battery state of
+             health},
+  journal = {Journal of Power Sources},
+  volume  = {357},
+  pages   = {209--219},
+  year    = {2017},
+  doi     = {10.1016/j.jpowsour.2017.05.004}
+}
+
+% ---- Saha & Goebel (2007) -- NASA battery data set -----------------------
+@misc{saha2007,
+  author       = {Saha, B. and Goebel, K.},
+  title        = {Battery data set},
+  howpublished = {NASA Ames Prognostics Data Repository},
+  year         = {2007},
+  url          = {https://ti.arc.nasa.gov/tech/dash/groups/pcoe/prognostic-data-repository/}
+}
+
+% ---- Statista (2026) -- Li-ion battery market statistics -----------------
+@misc{statista2026,
+  author       = {{Statista}},
+  title        = {Lithium-ion batteries --- Statistics \& facts},
+  howpublished = {Statista},
+  year         = {2026},
+  url          = {https://www.statista.com/topics/2049/lithium-ion-battery-industry/}
+}
+
+% ---- Su, Xu & Dong (2024) -- SOH estimation review -----------------------
+@article{su2024,
+  author  = {Su, L. and Xu, Y. and Dong, Z.},
+  title   = {State-of-health estimation of lithium-ion batteries: A
+             comprehensive literature review from cell to pack levels},
+  journal = {Energy Conversion and Economics},
+  volume  = {5},
+  number  = {4},
+  pages   = {224--242},
+  year    = {2024},
+  doi     = {10.1049/enc2.12125}
+}
+
+% ---- Wang, Wei & He (2025) -- Pressure-aware Mamba ----------------------
+@article{wang2025,
+  author  = {Wang, Q. and Wei, C. and He, Y.},
+  title   = {Pressure-aware {Mamba} for high-accuracy state of charge
+             estimation in lithium-ion batteries},
+  journal = {Processes},
+  volume  = {13},
+  number  = {7},
+  eid     = {2293},
+  year    = {2025},
+  doi     = {10.3390/pr13072293}
+}
+
+% ---- Weng et al. (2016) -- Incremental capacity peak tracking ------------
+@article{weng2016,
+  author  = {Weng, C. and Feng, X. and Sun, J. and Peng, H.},
+  title   = {State-of-health monitoring of lithium-ion battery modules and
+             packs via incremental capacity peak tracking},
+  journal = {Applied Energy},
+  volume  = {180},
+  pages   = {360--368},
+  year    = {2016},
+  doi     = {10.1016/j.apenergy.2016.07.126}
+}
+
+% ---- Yang et al. (2023) -- Multi-feature collaborative analysis ----------
+@article{yang2023,
+  author  = {Yang, X. and Ma, B. and Xie, H. and Wang, W. and Zou, B. and
+             Liang, F. and others},
+  title   = {Lithium-ion battery state of health estimation with
+             multi-feature collaborative analysis and deep learning method},
+  journal = {Batteries},
+  volume  = {9},
+  number  = {2},
+  eid     = {120},
+  year    = {2023},
+  doi     = {10.3390/batteries9020120}
+}
+
+% ---- Yao et al. (2021) -- SOH estimation & prediction review -------------
+@article{yao2021,
+  author  = {Yao, L. and Xu, S. and Tang, A. and Zhou, F. and Hou, J. and
+             Xiao, Y. and Fu, Z.},
+  title   = {A review of lithium-ion battery state of health estimation and
+             prediction methods},
+  journal = {World Electric Vehicle Journal},
+  volume  = {12},
+  number  = {3},
+  eid     = {113},
+  year    = {2021},
+  doi     = {10.3390/wevj12030113}
+}
+
+% ---- Zhao et al. (2024) -- AT-CNN-BiLSTM --------------------------------
+@article{zhao2024,
+  author  = {Zhao, F. M. and Gao, D. X. and Cheng, Y. M. and Yang, Q.},
+  title   = {Application of state of health estimation and remaining useful
+             life prediction for lithium-ion batteries based on
+             {AT-CNN-BiLSTM}},
+  journal = {Scientific Reports},
+  volume  = {14},
+  number  = {1},
+  eid     = {29026},
+  year    = {2024},
+  doi     = {10.1038/s41598-024-80421-2}
 }

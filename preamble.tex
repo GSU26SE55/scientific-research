@@ -1,66 +1,128 @@
 %==============================================================================
-% Preamble: package imports, math operators, and global settings
+% Preamble: package imports and global settings for the Springer LNCS class
+%
+% NOTE FOR LNCS: Springer typesets the final version with its own fonts and
+% layout, so do NOT add font packages (times/newtx/...) or change the page
+% geometry defined by llncs.cls (\textwidth = 12.2cm, \textheight = 19.3cm).
 %==============================================================================
 
-% ---- Encoding & fonts ------------------------------------------------------
-\usepackage[utf8]{inputenc}
+% ---- Encoding --------------------------------------------------------------
 \usepackage[T1]{fontenc}
-\usepackage{times}              % IEEE-recommended font family
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp}           % \textdegree, \textcelsius, ...
 
 % ---- Math ------------------------------------------------------------------
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage{mathtools}
 \usepackage{bm}                 % bold math symbols
 
 % ---- Graphics & figures ----------------------------------------------------
 \usepackage{graphicx}
 \graphicspath{{figures/}}       % default figure search path
-\usepackage{subcaption}         % sub-figures (replaces deprecated subfigure)
-\usepackage{float}              % [H] placement specifier
+% NOTE: do NOT load `caption'/`subcaption' -- they override the LNCS caption
+% layout and emit an "Unknown document class" warning with llncs.cls.
+
+% ---- Float packing ---------------------------------------------------------
+% This paper is float-heavy (6 tables + 2 figures). LaTeX's default placement
+% heuristics leave large slack (they cap floats at 70 % of a page and reserve
+% 20 % for text), which inflates the page count. The parameters below let
+% floats pack more densely. They only affect *placement*, not the page geometry
+% or type area defined by llncs.cls, so the Springer layout is preserved.
+\renewcommand{\topfraction}{0.9}       % up to 90 % of a page top may be floats
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.07}     % require only 7 % text on a mixed page
+\renewcommand{\floatpagefraction}{0.75}% a float-only page must be >=75 % full
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+% Trim the (generous) default space between a float and the body text. This is
+% a modest, uniform reduction to recover the whitespace LaTeX leaves around the
+% paper's 8 floats; it does not alter the type area or line spacing.
+\setlength{\textfloatsep}{9pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
 
 % ---- Tables ----------------------------------------------------------------
 \usepackage{array}
 \usepackage{booktabs}           % \toprule, \midrule, \bottomrule
 \usepackage{multirow}
 \usepackage{tabularx}
+\usepackage{ragged2e}           % \RaggedRight inside p/X columns
 
-% ---- Algorithms ------------------------------------------------------------
-\usepackage{algorithm}
-\usepackage{algpseudocode}
+% New column types used by the wide comparison tables.
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\Centering\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
 
-% ---- Code listings ---------------------------------------------------------
-\usepackage{listings}
-\usepackage{xcolor}
-\lstset{
-  basicstyle=\ttfamily\footnotesize,
-  keywordstyle=\color{blue},
-  commentstyle=\color{gray}\itshape,
-  stringstyle=\color{red!70!black},
-  numbers=left, numberstyle=\tiny\color{gray},
-  breaklines=true, frame=single, captionpos=b
-}
+% Layout helpers for the wide comparison tables. The LNCS text block is only
+% 12.2 cm wide, so multi-column tables need reduced inter-column padding and
+% permissive hyphenation inside p/X columns to avoid overfull boxes.
+%   \tabtight  -- narrow padding, aggressive line breaking (wide tables)
+%   \tabairy   -- extra padding (narrow tables, keeps headers from touching)
+\newcommand{\tabtight}{%
+  \setlength{\tabcolsep}{3pt}%
+  \hyphenpenalty=10 \exhyphenpenalty=10 \tolerance=9999
+  \emergencystretch=1em\relax}
+\newcommand{\tabairy}{\setlength{\tabcolsep}{9pt}}
+
+% Two-line (stacked) table header, e.g. \hd{MAE}{(\%)} -- keeps wide numeric
+% headers from dictating the column width.
+\newcommand{\hd}[2]{\begin{tabular}[b]{@{}c@{}}\textbf{#1}\\\textbf{#2}\end{tabular}}
+
+% ---- Units & numbers -------------------------------------------------------
+\usepackage{siunitx}
+\sisetup{detect-all, group-digits = false}
 
 % ---- URLs & hyperlinks -----------------------------------------------------
 \usepackage{url}
 \usepackage{hyperref}
+% Springer eBook style: URLs in blue roman font.
+\renewcommand\UrlFont{\color{blue}\rmfamily}
 \hypersetup{
-  colorlinks=true,
-  linkcolor=black,
-  citecolor=black,
-  urlcolor=blue,
-  pdftitle={IEEEtran Paper Template},
-  pdfauthor={Author Name}
+  colorlinks  = true,
+  linkcolor   = black,
+  citecolor   = black,
+  urlcolor    = blue,
+  pdftitle    = {Mamba State Space Model with Spectral Feature Conditioning
+                 for State of Health Prediction and Anomaly Detection in
+                 Lithium-Ion Batteries},
+  pdfauthor   = {Phuc Duy Nguyen, Phuoc Thang Bui, Hong Thai Mai,
+                 Minh Tri Tran, Nhat Minh Nguyen},
+  pdfkeywords = {Lithium-ion batteries; State of Health; Mamba; FiLM;
+                 anomaly detection; edge computing}
 }
-\usepackage{cleveref}           % \cref / \Cref for smart cross-refs
 
 % ---- Misc utilities --------------------------------------------------------
-\usepackage{balance}            % balance the last page's two columns
-\usepackage{cite}               % compact citation lists [1]–[3] instead of [1,2,3]
-\usepackage{orcidlink}          % optional: \orcidlink{0000-0000-0000-0000}
+\usepackage{xcolor}
+\usepackage{xspace}
+
+% ---- Hyphenation exceptions ------------------------------------------------
+% TeX has no patterns for CamelCase technical names, so it either refuses to
+% break them or breaks them in ugly places (e.g. "Sam-baMixer"). Fix the ones
+% that actually occur in this paper.
+\hyphenation{%
+  Mamba-SOH-Pre-dic-tor Mamba-Block Mamba-Blocks Mamba-Mixer Mamba-Lithium
+  Samba-Mixer Patch-TST Patch-De-gra-da-tion-En-coder Min-Max-Scaler
+  Layer-Norm py-torch Py-Torch tele-me-try}
+
+% ---- Line breaking ---------------------------------------------------------
+% The LNCS measure is narrow (12.2 cm), so a few justified lines cannot be
+% broken without overflowing the margin. \emergencystretch lets TeX loosen
+% interword spacing on those lines instead of producing overfull boxes.
+\setlength{\emergencystretch}{1.5em}
 
 % ---- Custom commands -------------------------------------------------------
 \newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
 \newcommand{\eg}{\textit{e.g.,}\xspace}
 \newcommand{\ie}{\textit{i.e.,}\xspace}
 \newcommand{\etal}{\textit{et al.}\xspace}
-\usepackage{xspace}
+
+% Degree Celsius, written consistently throughout the paper: 4\degC
+\newcommand{\degC}[1]{\ensuremath{#1\,^{\circ}}C\xspace}
+
+% Left-aligned explanatory note underneath a table (e.g. symbol footnotes).
+% The minipage keeps the text flush-left even inside a centred table float.
+\newcommand{\tabnote}[1]{%
+  \par\vspace{2pt}%
+  \noindent\begin{minipage}{\linewidth}%
+    \setlength{\parindent}{0pt}\small\raggedright #1%
+  \end{minipage}\par}

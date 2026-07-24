@@ -1,50 +1,113 @@
 %==============================================================================
-% Section II: Related Work
+% Section 2: Related Work
 %==============================================================================
 \section{Related Work}
 \label{sec:related}
 
-We organize prior work into three threads most relevant to this paper:
-(i)~[thread~A], (ii)~[thread~B], and (iii)~[thread~C].
-We close the section by clarifying how our work differs from each thread.
+% ---- 2.1 --------------------------------------------------------------------
+\subsection{Deep Sequence Modeling: From RNNs to Mamba}
+\label{subsec:related-sequence}
 
-% ---- Subsection A ----------------------------------------------------------
-\subsection{[Thread A: e.g., Deep Learning for X]}
-\label{subsec:related-a}
+Section~\ref{sec:introduction} traced the path from recurrent architectures to
+Transformers and selective state space models. This has yielded several
+Mamba-based battery-prognostics implementations (MambaLithium, SambaMixer and
+iMamba variants) that claim better accuracy and efficiency for unified SOH, SOC
+and RUL estimation than recurrent and attention-based
+baselines~\cite{huang2025,olalde2024}.
 
-Early work on [Thread~A] focused on [classical approach]~\cite{lecun2015deep}.
-Subsequent studies introduced [extension]~\cite{he2016deep}, achieving
-substantial gains on [benchmark]. More recently, [trend, e.g.,
-transformer-based architectures] have dominated this
-line~\cite{vaswani2017attention,devlin2019bert}.
-\emph{However}, these methods generally assume [assumption], which is
-violated in [our setting].
+% ---- 2.2 --------------------------------------------------------------------
+\subsection{Health Indicators and Multimodal Frequency Conditioning}
+\label{subsec:related-indicators}
 
-% ---- Subsection B ----------------------------------------------------------
-\subsection{[Thread B: e.g., Self-supervised Representation Learning]}
-\label{subsec:related-b}
+Health indicators range from raw telemetry (voltage/current/temperature) to
+more degradation-sensitive quantities such as incremental capacity and
+differential voltage analysis~\cite{su2024}, electrochemical impedance
+spectroscopy~\cite{alsmadi2025}, and internal gas pressure~\cite{wang2025},
+enabling multi-feature rather than purely time-domain approaches~\cite{yang2023}.
+Fusing such multi-domain information with high-dimensional temporal sequences is
+difficult because of mismatched statistical distributions, and naive
+concatenation commonly causes modal conflicts and suboptimal gradient
+flow~\cite{meng2026}. The Hybrid Sensing Synergy Architecture (HSSA) uses
+Q-Former and cross-attention to align EIS features to the temporal
+representation space~\cite{meng2026}, whereas Feature-wise Linear Modulation
+(FiLM) offers a lighter alternative that adapts sequence representations
+directly from spectral conditioning without specialised EIS
+hardware~\cite{huang2025}.
 
-A complementary direction explores [Thread~B]. Representative methods
-include [Method~1]~\cite{devlin2019bert} and [Method~2]~\cite{he2016deep},
-which [what they do]. While effective, [shortcoming relative to our work].
+% ---- 2.3 --------------------------------------------------------------------
+\subsection{Robust Diagnostics and Anomaly Detection}
+\label{subsec:related-anomaly}
 
-% ---- Subsection C ----------------------------------------------------------
-\subsection{[Thread C: e.g., Efficient Inference]}
-\label{subsec:related-c}
+Designing a robust, safe AI-powered Battery Management
+System~\cite{arbaoui2024} requires point-wise state-of-health (SOH) estimation,
+uncertainty quantification and anomaly detection. Anomalies---from sensor
+noise, distributional shifts or new internal faults---accelerate degradation
+and are flagged by anomaly detection~\cite{arbaoui2024}.
+% NOTE: the source manuscript cited "[34]" here, which does not exist in the
+% reference list (23 entries). Mapped to Arbaoui et al. (2024), the closest
+% match by topic -- please confirm the intended source.
+Hybrid methods have proven effective in practical solar-grid and EV cases,
+from statistical techniques (local outlier factor, Mahalanobis distance) to
+advanced frameworks such as Markov-constrained Isolation
+Forest~\cite{aljohani2026}. Deploying such diagnostic tools within efficient
+Mamba-based architectures~\cite{meng2026,olalde2024} marks a step toward
+self-aware, deployable battery health monitoring systems.
 
-Reducing the [cost / latency / memory] of [system] has been studied
-extensively~\cite{vaswani2017attention}. Techniques range from
-[technique~1] to [technique~2]. Unlike these works, we [our differentiator].
+% ---- 2.4 --------------------------------------------------------------------
+\subsection{Literature Comparison Matrix}
+\label{subsec:related-matrix}
 
-% ---- Positioning -----------------------------------------------------------
-\subsection{Positioning of Our Work}
-\label{subsec:related-positioning}
+Table~\ref{tab:literature} positions this work against the four most closely
+related families of approaches.
 
-In contrast to the above lines of work, our method:
-\begin{itemize}
-  \item does not require [costly resource], unlike~\cite{he2016deep};
-  \item generalizes to [setting], whereas~\cite{devlin2019bert} is limited
-        to [restricted setting]; and
-  \item offers a principled [theoretical/empirical] guarantee on
-        [property], which is absent from prior art.
-\end{itemize}
+\begin{table}[t]
+  \caption{Comprehensive literature comparison matrix and structural
+           comparison.}
+  \label{tab:literature}
+  \centering
+  \scriptsize
+  \tabtight
+  % Note: plain spaces (not ~) before \cite inside the cells, so that a long
+  % study name and its citation label can break across lines.
+  \begin{tabularx}{\textwidth}{@{}L{2.15cm} L{1.55cm} Y Y Y@{}}
+    \toprule
+    \textbf{Study} & \textbf{Method family} & \textbf{Key strength} &
+    \textbf{Key limitation} & \textbf{Relation to this work} \\
+    \midrule
+    LSTM / CNN-LSTM \cite{arbaoui2024,zhao2024}
+      & Sequential / hybrid CNN-RNN
+      & Effective temporal modelling on short windows; simple implementation
+      & Recurrence bottleneck; struggles with long-range dependencies and
+        cross-battery generalisation
+      & Served as primary baseline for comparison; outperformed by the
+        proposed Mamba architecture \\
+    \addlinespace[2pt]
+    Transformer / PatchTST \cite{patel2025,nie2023}
+      & Attention-based Transformer
+      & Strong global context capture via self-attention
+      & Quadratic complexity $O(L^{2})$; high memory/latency on long sequences
+        ($L=4096$); edge deployment challenges
+      & Advanced baseline demonstrating limitations addressed by the linear
+        Mamba backbone \\
+    \addlinespace[2pt]
+    Unimodal Mamba (SambaMixer,
+        MambaLithium) \cite{olalde2024}
+      & Selective state space model (SSM)
+      & Linear complexity $O(L)$; efficient long-sequence modelling
+      & Unimodal (raw telemetry only); limited physics-informed conditioning
+        and interpretability
+      & Core backbone adopted and extended; this work adds spectral
+        conditioning via FiLM \\
+    \addlinespace[2pt]
+    HSSA (Mamba $+$ EIS multimodal) \cite{meng2026}
+      & Mamba + Q-Former multimodal fusion
+      & Multimodal fusion of discharge curves and impedance spectra; strong
+        performance on NASA
+      & Requires EIS data (not always available in the field); higher
+        complexity for edge devices
+      & Closely related multimodal inspiration; this work uses spectral
+        features (FFT/statistical) as a more lightweight alternative
+        conditioning signal \\
+    \bottomrule
+  \end{tabularx}
+\end{table}

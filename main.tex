@@ -1,28 +1,28 @@
 %==============================================================================
-% IEEEtran Paper - Main File
-% Compile: pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
-% Or use the included Makefile: `make`
+% Springer LNCS Paper - Main File
+%
+%   "Mamba State Space Model with Spectral Feature Conditioning for
+%    State of Health Prediction and Anomaly Detection in Lithium-Ion Batteries"
+%
+% Compile: pdflatex main -> bibtex main -> pdflatex main -> pdflatex main
+% Or simply: `make`   (uses latexmk when available)
 %==============================================================================
 
 % ---- Document class ---------------------------------------------------------
-% Options:
-%   conference     -> conference paper (default for most submissions)
-%   journal        -> journal/Transactions paper
-%   technote       -> brief technote
-%   peerreview     -> double-spaced peer review
-%   draftcls       -> draft mode (single column, double spaced)
-\documentclass[conference,a4paper,10pt]{IEEEtran}
+% `runningheads` prints the running head (short title / short author list)
+% required by Springer LNCS proceedings.
+\documentclass[runningheads]{llncs}
 
-% ---- Packages ---------------------------------------------------------------
+% ---- Packages & custom commands --------------------------------------------
 \input{preamble.tex}
-
-% ---- Metadata (title, authors) ---------------------------------------------
-\input{sections/00_metadata.tex}
 
 %==============================================================================
 \begin{document}
 
-\maketitle
+% ---- Metadata (title, authors, affiliations) -------------------------------
+\input{sections/00_metadata.tex}
+
+\maketitle                    % typeset the header of the contribution
 
 % ---- Abstract & Keywords ---------------------------------------------------
 \input{sections/01_abstract.tex}
@@ -39,13 +39,9 @@
 \input{sections/08_acknowledgment.tex}
 
 % ---- References ------------------------------------------------------------
-\bibliographystyle{IEEEtran}
+% Springer LNCS requires the `splncs04` BibTeX style (alphabetic sorting,
+% numeric labels).
+\bibliographystyle{splncs04}
 \bibliography{bib/references}
-
-% ---- Appendix (optional) ---------------------------------------------------
-\input{sections/09_appendix.tex}
-
-% ---- Author biography (journal only, comment out for conference) -----------
-% \input{sections/10_biography.tex}
 
 \end{document}

@@ -1,33 +1,37 @@
 %==============================================================================
-% Abstract (150-250 words) + Index Terms
+% Abstract + Keywords
+% (In the LNCS class both live inside the `abstract' environment.)
 %==============================================================================
 
 \begin{abstract}
-% ---- 1) Context / motivation (1-2 sentences) -------------------------------
-Recent advances in [your field, e.g., deep learning for medical imaging]
-have enabled [capability], yet [unresolved problem] remains a major obstacle
-to real-world deployment.
-% ---- 2) Problem statement --------------------------------------------------
-Existing approaches typically rely on [assumption / method], which
-[limitation: e.g., requires large labeled datasets, fails under distribution
-shift, is computationally expensive].
-% ---- 3) Proposed method (1-2 sentences) ------------------------------------
-In this paper, we propose \textbf{[METHOD NAME]}, a [type of approach]
-that [key idea in plain language]. Specifically, we introduce
-[component~1], [component~2], and [component~3], which together
-[claimed benefit].
-% ---- 4) Experiments & results ----------------------------------------------
-Extensive experiments on [dataset~1] and [dataset~2] demonstrate that
-our method achieves [headline metric, e.g., 92.4\% accuracy], outperforming
-the strongest baseline by [\(+X.X\)\%] while reducing [cost metric] by
-[\(Y\%\)].
-% ---- 5) Contribution take-away ---------------------------------------------
-Our results suggest that [insight], opening a path toward [broader impact].
-Code and pretrained models will be released upon publication.
-\end{abstract}
+The fast development of solar energy systems and electric vehicle applications
+requires robust monitoring of lithium-ion batteries, since the failure to
+detect capacity degradation can cause huge economic losses and safety concerns.
+Although the State of Health (SOH) is the most important indicator to determine
+the condition of the battery, accurate and real-time estimation from raw sensor
+data is still a big computational and methodological challenge. Conventional
+recurrent models struggle to learn long-term temporal dependencies in
+degradation cycles, and Transformer architectures are prohibitively expensive
+for deployment in edge environments. In this paper, we propose
+MambaSOHPredictor, a lightweight framework based on the Selective State Space
+Model (Mamba) with physics-informed spectral feature conditioning. The
+architecture is available in two configurations: a high-accuracy long-sequence
+model ($L = 4096$) for full discharge cycles, or a compact 30-step window
+variant for real-time edge inference. MambaBlocks process the multivariate
+time-series data (voltage, current, temperature) with linear $O(L)$ complexity.
+Feature-wise Linear Modulation (FiLM) is used with a 57-dimensional cycle-level
+spectral and statistical feature vector. Uncertainty estimation is done by
+Monte Carlo Dropout, and anomaly detection is done by Isolation Forest in the
+same feature space at the same time. Combining the outputs gives us a risk
+matrix to prioritise predictive maintenance. The long-sequence model under a
+strict cross-battery protocol yields an MAE of 1.52\,\% and an RMSE of
+1.97\,\% on the NASA Ames dataset, surpassing industrial thresholds. The
+compact configuration can complete inference in less than 100\,ms on CPU, which
+demonstrates practical feasibility for real-time edge deployment without GPU
+acceleration.
 
-% ---- Index terms (4-6, alphabetically ordered) -----------------------------
-\begin{IEEEkeywords}
-Artificial intelligence, deep learning, [keyword~3],
-[keyword~4], [keyword~5].
-\end{IEEEkeywords}
+\keywords{Lithium-ion batteries \and State of Health (SOH)
+  \and Mamba state space model \and Spectral feature conditioning
+  \and FiLM \and Anomaly detection \and Edge computing
+  \and Predictive maintenance}
+\end{abstract}

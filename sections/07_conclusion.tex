@@ -1,37 +1,32 @@
 %==============================================================================
-% Section VII: Conclusion
+% Section 6: Conclusion
 %==============================================================================
-\section{Conclusion and Future Work}
+\section{Conclusion}
 \label{sec:conclusion}
 
-In this paper, we proposed \textbf{[METHOD NAME]}, a [type of method]
-that addresses [the central problem] by [the core idea]. Through
-[architectural innovation] and [training innovation], our method achieves
-state-of-the-art performance on [N] public benchmarks while being more
-efficient than competitive baselines. A detailed ablation study confirms
-that each component contributes meaningfully to the overall performance.
+This paper presents MambaSOHPredictor, a unified Mamba-based architecture
+evaluated under a cross-battery, cross-temperature protocol substantially more
+demanding than the timestep-based splits common in the literature. The
+long-sequence configuration ($L = 4096$) achieved an MAE of 1.52\,\% and an
+RMSE of 1.97\,\% on the fully unseen, underrepresented \degC{4} cell B0048,
+surpassing the 2\,\% industrial threshold and reducing the relative error by
+69\,\% versus a CNN-LSTM baseline, while the lightweight window-30 configuration
+(79k parameters) kept a sub-2\,\% MAE at 56.1\,ms mean latency (P95
+$=$ 78.3\,ms) on a standard CPU.
 
-% ---- Limitations -----------------------------------------------------------
-\paragraph{Limitations.}
-Our work has several limitations worth acknowledging.
-\textbf{First}, [METHOD NAME] requires [resource / assumption], which may
-not hold in [specific real-world setting].
-\textbf{Second}, the method exhibits degraded performance on [edge case],
-suggesting that further work is needed for [scenario].
-\textbf{Third}, our evaluation is limited to [scope]; broader validation
-across [other domains] remains an open question.
+The 16-fold leave-one-battery-out evaluation confirmed B0048 was not a
+favourably biased choice, while revealing a clear failure mode---degraded
+accuracy for cells confined to rarely observed low-SOH regimes---mitigated by
+expanding training coverage rather than by architectural changes. For anomaly
+detection, we transparently report a modest F1 of 0.34 on proxy labels,
+positioning the module as a sensitive early-warning filter requiring human
+verification rather than an autonomous classifier.
 
-% ---- Future work -----------------------------------------------------------
-\paragraph{Future Work.}
-We see several promising directions:
-\begin{enumerate}
-  \item Extending [METHOD NAME] to [related task / setting], where the
-        same insight may yield similar gains.
-  \item Combining our approach with [orthogonal technique] to further
-        improve [property].
-  \item Investigating the theoretical guarantees behind the observed
-        [empirical property], which could lead to a deeper understanding
-        of [the underlying phenomenon].
-\end{enumerate}
-We hope this work inspires further research at the intersection of
-[area~A] and [area~B].
+Overall, industrial-grade accuracy and real-time edge deployability are jointly
+achievable within a single lightweight, pure-PyTorch framework under a rigorous
+generalisation protocol. Future work will expand training coverage across
+underrepresented temperature\,$\times$\,SOH combinations, add remaining useful
+life (RUL) prediction, integrate SOH and anomaly outputs into a
+maintenance-decision risk matrix, and develop a retrieval-augmented generation
+(RAG) prescription layer -- extensions being pursued within the broader solar
+battery monitoring system under development by the author group.

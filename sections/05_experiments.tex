@@ -1,148 +1,223 @@
 %==============================================================================
-% Section IV: Experiments & Results
+% Section 4: Experimental Results
 %==============================================================================
-\section{Experiments}
+\section{Experimental Results}
 \label{sec:experiments}
 
-We evaluate [METHOD NAME] across multiple benchmarks to answer the
-following research questions:
-\begin{description}
-  \item[\textbf{RQ1}] Does [METHOD NAME] outperform state-of-the-art
-                     baselines on standard benchmarks?
-  \item[\textbf{RQ2}] How does each component contribute to overall
-                     performance?
-  \item[\textbf{RQ3}] How sensitive is the method to the choice of
-                     hyperparameters?
-  \item[\textbf{RQ4}] What is the computational cost compared to existing
-                     methods?
-\end{description}
-
-% ---- Experimental setup ----------------------------------------------------
+% ---- 4.1 --------------------------------------------------------------------
 \subsection{Experimental Setup}
 \label{subsec:setup}
 
-\subsubsection{Datasets}
-We evaluate on three public datasets:
-\textbf{[Dataset~1]}~\cite{he2016deep} containing \(N_1\) samples,
-\textbf{[Dataset~2]}~\cite{devlin2019bert} with \(N_2\) samples, and
-\textbf{[Dataset~3]} (proprietary). Standard train/val/test splits are
-used.
+Prediction accuracy uses MAE and RMSE in \%\,SOH, and anomaly detection uses
+precision, recall and F1-score, against industrial targets
+$\mathrm{MAE} < 2\,\%$ and $\mathrm{RMSE} < 3\,\%$. Models were trained in a
+Kaggle GPU environment in pure PyTorch (no custom CUDA kernels); latency was
+benchmarked on an Intel Core i7-14650HX CPU. All experiments use a fixed seed of
+42 and the cross-battery protocol of Section~\ref{subsec:dataset}.
 
-\subsubsection{Baselines}
-We compare against [Baseline~1]~\cite{he2016deep},
-[Baseline~2]~\cite{vaswani2017attention}, and
-[Baseline~3]~\cite{devlin2019bert}, covering the most competitive
-approaches in the literature.
-
-\subsubsection{Evaluation Metrics}
-We report \textbf{Accuracy}, \textbf{F1-score}, and \textbf{AUROC} for
-classification, and additionally measure \textbf{Inference Latency} (ms)
-and \textbf{Peak GPU Memory} (GB) for efficiency.
-
-\subsubsection{Implementation Details}
-All models are implemented in PyTorch~1.13 and trained on a single
-NVIDIA~A100 (40\,GB) GPU. We use the AdamW optimizer
-(\(\eta=1\!\times\!10^{-4}\), weight decay \(0.01\)), batch size~\(128\),
-and train for~\(100\) epochs. Hyperparameters are tuned on the validation
-set; \(\tau=0.07\) and \(\lambda=0.5\) yielded the best results.
-
-% ---- Main results ----------------------------------------------------------
-\subsection{Main Results (RQ1)}
+% ---- 4.2 --------------------------------------------------------------------
+\subsection{Main Results}
 \label{subsec:main-results}
 
-\Cref{tab:main} summarizes our main results. [METHOD NAME] consistently
-outperforms all baselines across the three datasets. On~[Dataset~1], we
-improve top-1 accuracy by \(+2.4\%\) over the strongest baseline.
+Table~\ref{tab:main} compares four models on held-out cell B0048 (\degC{4},
+unseen during training), all trained on the same 23/2/1 cross-battery split and
+seed.
 
 \begin{table}[t]
-  \caption{Comparison with state-of-the-art on three benchmarks.
-           Best results are in \textbf{bold}.}
+  \caption{SOH prediction performance on held-out test cell B0048
+           (23/2/1 cross-battery split).}
   \label{tab:main}
   \centering
   \small
-  \begin{tabular}{lccc}
+  \setlength{\tabcolsep}{6pt}
+  \begin{tabular}{@{}l c l r r@{}}
     \toprule
-    Method                & Dataset~1 & Dataset~2 & Dataset~3 \\
+    \textbf{Model} & \textbf{Params} & \textbf{Input} &
+    \hd{MAE}{(\%)} & \hd{RMSE}{(\%)} \\
     \midrule
-    Baseline~1~\cite{he2016deep}        & 86.1 & 78.3 & 71.2 \\
-    Baseline~2~\cite{vaswani2017attention} & 88.7 & 81.0 & 74.5 \\
-    Baseline~3~\cite{devlin2019bert}    & 89.5 & 82.4 & 75.9 \\
+    Naive last-SOH (oracle)$^{\dagger}$ & --   & Ground-truth SOH
+      & 0.89 & 1.49 \\
+    CNN-LSTM (baseline)                 & 61k  & Telemetry, window 30
+      & 4.90 & 6.49 \\
+    Mamba window-30 (ours)              & 79k  & Telemetry, window 30
+      & 1.98 & 2.38 \\
+    Mamba long $L = 4096$ (ours)        & 99k  & Telemetry, full cycle
+      & 1.52 & 1.97 \\
+    \bottomrule
+  \end{tabular}
+  \tabnote{$^{\dagger}$Oracle reference only: it consumes the previous cycle's
+  \emph{measured} capacity, which real deployments cannot obtain every cycle.}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.78\textwidth]{soh_prediction_b0048.png}
+  \caption{Predicted vs.\ ground-truth SOH on B0048 -- the sole fully held-out
+           test battery under the cross-battery protocol. Shaded band:
+           $\pm 1$ standard deviation over 10 MC Dropout samples; per-battery
+           robustness is reported in Table~\ref{tab:lobo} (LOBO).}
+  \label{fig:prediction-b0048}
+\end{figure}
+
+Among telemetry-only models -- the realistic deployment scenario -- the
+long-sequence Mamba configuration achieved an MAE of 1.52\,\%, below the 2\,\%
+target and a 69\,\% relative reduction versus the CNN-LSTM baseline (4.90\,\%),
+despite the test cell being entirely unseen at an underrepresented \degC{4}. The
+compact window-30 variant likewise cut relative error by 60\,\% (MAE 1.98\,\%),
+while CNN-LSTM's weak cross-battery generalisation further supports the
+selective state space choice.
+
+The naive baseline (the previous cycle's measured SOH) attained an MAE of
+0.89\,\%, outperforming all learned models, but it is not a viable competitor:
+it requires per-cycle capacity measurements that real systems cannot obtain,
+and serves only as an oracle reference for the harder, realistic task of
+estimating SOH from telemetry alone. As noted in
+Section~\ref{subsec:dataset}, direct comparison with intra-cell split studies
+is avoided here (see Section~\ref{sec:discussion} for a partial exception).
+% NOTE: the source manuscript wrote "As noted in Section 1"; the cross-battery
+% protocol is actually introduced in Section 3.1, so the cross-reference has
+% been retargeted there. Please confirm.
+
+A data-centric refinement further improved the window-30 model: per-band
+analysis (Section~\ref{subsec:ablation}) revealed a systematic negative bias in
+the high-SOH region under \degC{4}, where training coverage reached only
+67.2\,\% SOH. Adding one \degC{4} cell (B0047, covering SOH 0--83.7\,\%), with
+no architectural or hyperparameter change, cut the MAE on B0048 from 1.98\,\% to
+1.34\,\% (RMSE 2.38\,\% $\rightarrow$ 1.84\,\%; reported separately due to the
+modified 24/1/1 split), showing that data coverage can matter as much as
+architecture.
+
+% ---- 4.3 --------------------------------------------------------------------
+\subsection{Robustness Evaluation -- Leave-One-Battery-Out}
+\label{subsec:lobo}
+
+A single held-out cell cannot establish statistical reliability, so we repeated
+the experiment via leave-one-battery-out (LOBO) on the window-30 configuration,
+refitting scalers per fold. Of 26 cells, 10 lacked the minimum 60 cycles,
+leaving 16 valid folds.
+
+\begin{table}[t]
+  \caption{LOBO robustness (window-30 configuration, 16 folds).}
+  \label{tab:lobo}
+  \centering
+  \small
+  \tabairy
+  \begin{tabular}{@{}l r r@{}}
+    \toprule
+    \textbf{Statistic} & \textbf{MAE (\%)} & \textbf{RMSE (\%)} \\
     \midrule
-    \textbf{[METHOD NAME] (ours)} & \textbf{91.9} & \textbf{85.1} & \textbf{78.6} \\
+    Mean $\pm$ std                      & $3.91 \pm 3.27$ & $4.81 \pm 4.17$ \\
+    Median                              & 2.22            & 2.55            \\
+    Fold B0048 ($=$ main test battery)  & 1.47            & 1.87            \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-% ---- Ablation studies -----------------------------------------------------
-\subsection{Ablation Study (RQ2)}
+Given the considerable variability, we report the full distribution rather than
+aggregates alone. Nine of 16 folds achieved $\mathrm{MAE} \le 2.3\,\%$ (best:
+B0042, 1.40\,\%); the B0048 fold (Table~\ref{tab:lobo}) is consistent with
+Table~\ref{tab:main}, confirming its selection was not favourably biased. Larger
+errors concentrated in cells confined to low-SOH regimes: B0045 (14.61\,\%,
+never exceeding 54\,\% SOH), B0033 (7.55\,\%) and B0054--B0056 (4.4--6.3\,\%),
+forcing extrapolation into SOH regions absent from training. LOBO thus confirms
+robustness in typical regimes while revealing a clear failure mode: poor
+extrapolation to atypical trajectories (Section~\ref{sec:discussion}).
+
+% ---- 4.4 --------------------------------------------------------------------
+\subsection{Ablation and Error Analysis}
 \label{subsec:ablation}
 
-We ablate each component to isolate its contribution
-(\Cref{tab:ablation}). Removing [Component~2] degrades accuracy by
-\(-1.8\%\), confirming its importance.
+\subsubsection{(a) Component Ablation.}
+Table~\ref{tab:ablation} quantifies each component's contribution by retraining
+the long-sequence model with one modification at a time, all else unchanged.
 
 \begin{table}[t]
-  \caption{Ablation study on Dataset~1.}
+  \caption{Component ablation on test cell B0048
+           (long model, 23/2/1 split).}
   \label{tab:ablation}
   \centering
   \small
-  \begin{tabular}{lc}
+  \tabairy
+  \begin{tabular}{@{}l r r r@{}}
     \toprule
-    Variant                                & Accuracy (\%) \\
+    \textbf{Variant} & \textbf{MAE (\%)} & \textbf{RMSE (\%)} &
+    \textbf{$\Delta$ MAE} \\
     \midrule
-    Full model                             & \textbf{91.9} \\
-    \quad w/o [Component~1]                & 90.4 \\
-    \quad w/o [Component~2]                & 90.1 \\
-    \quad w/o [Component~3]                & 89.7 \\
+    Full model                                        & 1.52 & 1.97 & --     \\
+    Attention pooling $\rightarrow$ last token        & 1.93 & 2.38 & $+0.41$\\
+    $d_{\mathrm{state}}$ 32 $\rightarrow$ 16          & 1.24 & 1.61 & $-0.28$\\
+    No EOL-weighted loss                              & 1.32 & 1.69 & $-0.20$\\
     \bottomrule
   \end{tabular}
 \end{table}
 
-% ---- Hyperparameter sensitivity --------------------------------------------
-\subsection{Hyperparameter Sensitivity (RQ3)}
-\label{subsec:hyperparam}
+Attention pooling contributed most: replacing it with last-token pooling raised
+the MAE by 0.41 points (Table~\ref{tab:ablation}), the only degrading change,
+showing degradation information is distributed across the sequence rather than
+in the final token. Reducing $d_{\mathrm{state}}$ ($32 \rightarrow 16$) and
+removing the EOL-weighted loss slightly improved the MAE on B0048, but with a
+single test cell and few near-EOL samples these gains likely reflect
+cell-specific variability rather than general superiority, consistent with the
+LOBO spread (Section~\ref{subsec:lobo}); a full LOBO ablation is left for future
+work. The final model keeps $d_{\mathrm{state}} = 32$ and the EOL-weighted loss,
+as the larger state dimension aids long-sequence capacity and the weighted loss
+prioritises accuracy near the replacement threshold.
 
-\Cref{fig:sensitivity} shows that performance is stable across a wide
-range of \(\lambda\in[0.1, 1.0]\), indicating robustness to this
-hyperparameter.
+\subsubsection{(b) Error Analysis.}
+The error is not uniform across SOH bands: the 80--90\,\% band shows the
+largest bias ($-4.57\,\%$), consistent with the reduced near-EOL training
+density.
 
-% \begin{figure}[t]
-%   \centering
-%   \includegraphics[width=\columnwidth]{sensitivity.pdf}
-%   \caption{Accuracy on Dataset~1 vs.\ trade-off coefficient \(\lambda\).}
-%   \label{fig:sensitivity}
-% \end{figure}
+% ---- 4.5 --------------------------------------------------------------------
+\subsection{Inference Latency}
+\label{subsec:latency}
 
-% ---- Efficiency analysis ---------------------------------------------------
-\subsection{Efficiency Analysis (RQ4)}
-\label{subsec:efficiency}
+Latency was measured end-to-end via gRPC (scaler normalisation, feature
+extraction, batched 10-sample MC Dropout inference) over 50 calls on an Intel
+Core i7-14650HX CPU. The window-30 model averaged 56.1\,ms (P95 $=$ 78.3\,ms),
+meeting the $<100$\,ms real-time requirement for P1 alerts; the negligible gap
+versus direct inference (58.7\,ms) confirms minimal communication overhead. The
+long-sequence model trades real-time capability for accuracy, better suited to
+periodic offline evaluation.
 
-\Cref{tab:efficiency} compares inference latency and memory footprint.
-[METHOD NAME] is~\(1.3\times\) faster than Baseline~3 while using~\(22\%\)
-less GPU memory.
+% ---- 4.6 --------------------------------------------------------------------
+\subsection{Anomaly Detection}
+\label{subsec:anomaly}
+
+As the NASA dataset lacks explicit fault annotations, we defined a rate-based
+proxy label: cycles exceeding the 90th-percentile training degradation rate
+(0.4833\,\% SOH/cycle) are anomalous, matching the Isolation Forest
+contamination (0.1); the model (100 estimators, seed 42) was trained only on
+training-set spectral features.
 
 \begin{table}[t]
-  \caption{Inference latency and peak GPU memory.}
-  \label{tab:efficiency}
+  \caption{Anomaly detection results (Isolation Forest).}
+  \label{tab:anomaly}
   \centering
-  \small
-  \begin{tabular}{lcc}
+  \scriptsize
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{@{}l l l r r r r@{}}
     \toprule
-    Method      & Latency (ms) \(\downarrow\) & Memory (GB) \(\downarrow\) \\
+    \textbf{Label} & \textbf{Split} & \textbf{Threshold} &
+    \textbf{Precision} & \textbf{Recall} & \textbf{F1} &
+    \textbf{Positive rate} \\
     \midrule
-    Baseline~3  & 24.6 & 6.8 \\
-    \textbf{Ours} & \textbf{18.9} & \textbf{5.3} \\
+    Rate & Val  & Production (score $\le -0.1$\,/\,$-0.3$)
+         & 0.00 & 0.00 & 0.00 & 35.5\,\% \\
+    Rate & Val  & Tuned on val (score $\le 0.213$)
+         & 0.36 & 1.00 & 0.53 & 35.5\,\% \\
+    Rate & Test & Production (score $\le -0.1$\,/\,$-0.3$)
+         & 0.00 & 0.00 & 0.00 & 20.6\,\% \\
+    Rate & Test & Tuned on val (score $\le 0.213$)
+         & 0.21 & 1.00 & 0.34 & 20.6\,\% \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-% ---- Discussion / qualitative results --------------------------------------
-\subsection{Discussion}
-\label{subsec:discussion}
-
-The gains of [METHOD NAME] are most pronounced on [hard subset], where
-prior methods struggle due to [reason]. Qualitative visualizations
-(\Cref{fig:qualitative}) further confirm that [observation].
-Nonetheless, we observe that the method underperforms when
-[failure mode] --- we discuss potential remedies in
-\Cref{sec:conclusion}.
+The production threshold failed to detect anomalies ($\mathrm{F1} = 0$); after
+tuning on the validation set, the test F1 improved to 0.34 (100\,\% recall,
+0.21 precision), positioning the approach as a high-sensitivity early-warning
+filter requiring human verification rather than an autonomous fault detector.
+Since this proxy label reflects capacity degradation rather than genuine
+faults, future work should incorporate real IoT fault labels and
+semi-supervised methods (Section~\ref{sec:discussion}).

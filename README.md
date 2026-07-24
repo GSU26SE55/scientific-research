@@ -1,47 +1,53 @@
-# IEEEtran Paper — Modular LaTeX Source
+# Mamba State Space Model with Spectral Feature Conditioning — LaTeX Source
 
-A modular LaTeX project structured around the **IEEEtran** template.
-Each section of the paper lives in its own `.tex` file and is assembled
-into a single PDF via `main.tex` using `\input{}`.
+Springer **LNCS** (`llncs`) source for the paper:
+
+> **Mamba State Space Model with Spectral Feature Conditioning for State of
+> Health Prediction and Anomaly Detection in Lithium-Ion Batteries**
+> Nguyen Phuc Duy, Bui Phuoc Thang, Mai Hong Thai, Tran Minh Tri, Nguyen Nhat Minh
+> Faculty of Software Engineering, FPT University Ho Chi Minh City
+
+Each section lives in its own `.tex` file and is assembled into a single PDF by
+`main.tex` via `\input{}`.
 
 ## Directory layout
 
 ```
 .
-├── main.tex                  # Entry point — \input{} all parts here
-├── preamble.tex              # Package imports + custom commands
-├── Makefile                  # `make`, `make quick`, `make clean`
-├── .gitignore                # Ignore LaTeX build artifacts
+├── main.tex                     # Entry point — \documentclass{llncs} + \input{} all parts
+├── preamble.tex                 # Packages, table helpers, custom commands
+├── llncs.cls                    # Springer LNCS document class (v2.20)
+├── splncs04.bst                 # Springer LNCS BibTeX style (alphabetic sort)
+├── Makefile                     # `make`, `make quick`, `make clean`
 │
 ├── sections/
-│   ├── 00_metadata.tex       # Title, authors, affiliations
-│   ├── 01_abstract.tex       # Abstract + IEEEkeywords
-│   ├── 02_introduction.tex   # §I  Introduction
-│   ├── 03_related_work.tex   # §II Related Work
-│   ├── 04_methodology.tex    # §III Proposed Method
-│   ├── 05_experiments.tex    # §IV Experiments & Results
-│   ├── 06_conclusion.tex     # §V  Conclusion & Future Work
-│   ├── 07_acknowledgment.tex # Acknowledgment
-│   ├── 08_appendix.tex       # Appendices (optional)
-│   └── 09_biography.tex      # Author bios (journal only)
+│   ├── 00_metadata.tex          # Title, authors, affiliation, running heads
+│   ├── 01_abstract.tex          # Abstract + \keywords
+│   ├── 02_introduction.tex      # §1  Introduction
+│   ├── 03_related_work.tex      # §2  Related Work  (+ Table 1)
+│   ├── 04_methodology.tex       # §3  Methodology   (+ Eq. 1–2, Fig. 1)
+│   ├── 05_experiments.tex       # §4  Experimental Results (+ Tables 2–5, Fig. 2)
+│   ├── 06_discussion.tex        # §5  Discussion    (+ Table 6)
+│   ├── 07_conclusion.tex        # §6  Conclusion
+│   └── 08_acknowledgment.tex    # Acknowledgements
 │
 ├── bib/
-│   └── references.bib        # BibTeX entries
+│   └── references.bib           # 23 BibTeX entries
 │
-└── figures/                  # Drop .pdf / .png / .jpg figures here
+└── figures/
+    ├── architecture.png         # Fig. 1 — overall framework
+    └── soh_prediction_b0048.png # Fig. 2 — predicted vs. true SOH on B0048
 ```
 
-## How to build the PDF
-
-### Option 1 — `make` (recommended)
+## Build
 
 ```bash
-make           # full build: pdflatex → bibtex → pdflatex → pdflatex
-make quick     # single pass, fast preview (no bib update)
-make clean     # remove .aux/.log/... but keep main.pdf
+make            # full build: pdflatex → bibtex → pdflatex → pdflatex
+make quick      # single pass, fast preview (references not refreshed)
+make clean      # remove .aux/.log/... but keep main.pdf
 ```
 
-### Option 2 — Manual 4-pass build
+Or manually:
 
 ```bash
 pdflatex main.tex
@@ -50,79 +56,70 @@ pdflatex main.tex
 pdflatex main.tex
 ```
 
-### Option 3 — `latexmk` (handles all passes automatically)
+Or with `latexmk` (handles all passes):
 
 ```bash
 latexmk -pdf main.tex
 ```
 
-### Option 4 — Online editor
+**Overleaf:** upload the whole folder and set `main.tex` as the main document.
+`llncs.cls` and `splncs04.bst` are committed in the repo, so no extra package
+installation is required.
 
-Upload the entire project to [Overleaf](https://www.overleaf.com) and
-set `main.tex` as the main document.
+## LNCS conventions used here
 
-## Installing a LaTeX distribution (if you don't have one)
+| Item | Rule |
+|------|------|
+| Section numbering | Only two levels are numbered (`\section`, `\subsection`). `\subsubsection` renders as an unnumbered **run-in bold heading** — write the trailing period yourself. |
+| Table captions | Placed **above** the table (`\caption` before `tabular`). |
+| Figure captions | Placed **below** the figure; labelled `Fig. N`. |
+| References | `\bibliographystyle{splncs04}` — sorted alphabetically, numeric labels. **Never hard-code `[n]`; always use `\cite{key}`.** |
+| Fonts / geometry | Do not add font packages or change page geometry — Springer typesets the final version. The text block is only **12.2 cm** wide. |
+| Keywords | Go **inside** the `abstract` environment via `\keywords{... \and ...}`. |
 
-- **macOS** — `brew install --cask mactex` (full, ~4 GB) or `mactex-no-gui`
-  (smaller). Alternative: BasicTeX + `tlmgr install <pkg>` on demand.
-- **Linux** — `sudo apt install texlive-full latexmk` (Debian/Ubuntu).
-- **Windows** — install [MiKTeX](https://miktex.org/).
+## Custom helpers (defined in `preamble.tex`)
 
-The IEEEtran class file ships with all major distributions, so no manual
-download is needed.
+| Macro | Purpose |
+|-------|---------|
+| `\degC{4}` | Typesets `4 °C` consistently. |
+| `\tabsource{...}` | Centred italic *Source:* line under a table. |
+| `\tabnote{...}` | Left-aligned full-width note under a table (symbol footnotes). |
+| `\tabtight` | Narrow column padding + permissive hyphenation for wide tables. |
+| `\tabairy` | Extra column padding for narrow tables. |
+| `\hd{MAE}{(\%)}` | Two-line (stacked) table header. |
+| `L{w}` `C{w}` `Y` | Ragged-right fixed-width / centred / `tabularx` stretch columns. |
 
-## Switching between conference and journal format
+## Adding a figure
 
-In `main.tex`, change the `documentclass` option:
-
-```latex
-\documentclass[conference,a4paper,10pt]{IEEEtran}  % conference
-\documentclass[journal,a4paper,10pt]{IEEEtran}     % journal/Transactions
-\documentclass[technote,a4paper,10pt]{IEEEtran}    % brief
-```
-
-For journal submissions, also:
-1. Replace the `\author{...}` block in `sections/00_metadata.tex` with
-   the richer `\thanks{}` version (an example is included as a comment).
-2. Uncomment the `\input{sections/09_biography.tex}` line at the bottom
-   of `main.tex`.
-
-## Adding figures
-
-Drop image files into `figures/` and include them with:
+Drop the file into `figures/` and include it with:
 
 ```latex
-\begin{figure}[t]
+\begin{figure}[htbp]
   \centering
-  \includegraphics[width=\columnwidth]{your_figure.pdf}
-  \caption{Caption goes here.}
+  \includegraphics[width=\textwidth]{your_figure.png}
+  \caption{Caption below the figure.}
   \label{fig:your-label}
 \end{figure}
 ```
 
-Use `\Cref{fig:your-label}` (cleveref) to reference it.
+Reference it as `Fig.~\ref{fig:your-label}`.
 
 ## Adding a citation
 
-1. Append a BibTeX entry to `bib/references.bib`.
-2. Cite it in the text with `\cite{your-key}`.
-3. Rebuild with `make` to refresh the `.bbl` file.
+1. Append a BibTeX entry to `bib/references.bib` (key convention: `firstauthorYEAR`).
+2. Cite it with `\cite{your-key}`.
+3. Rebuild with `make` so `main.bbl` is regenerated and the numbers re-sorted.
 
-## Paper structure (mapped to IEEEtran convention)
+## Build health
 
-| # | File                              | Section in PDF        | Required? |
-|---|-----------------------------------|-----------------------|-----------|
-| 1 | `sections/00_metadata.tex`        | Title + Authors       | Yes       |
-| 2 | `sections/01_abstract.tex`        | Abstract + Keywords   | Yes       |
-| 3 | `sections/02_introduction.tex`    | I. Introduction       | Yes       |
-| 4 | `sections/03_related_work.tex`    | II. Related Work      | Yes       |
-| 5 | `sections/04_methodology.tex`     | III. Proposed Method  | Yes       |
-| 6 | `sections/05_experiments.tex`     | IV. Experiments       | Yes       |
-| 7 | `sections/06_conclusion.tex`      | V. Conclusion         | Yes       |
-| 8 | `sections/07_acknowledgment.tex`  | Acknowledgment        | Optional  |
-| 9 | `bib/references.bib`              | References            | Yes       |
-|10 | `sections/08_appendix.tex`        | Appendix              | Optional  |
-|11 | `sections/09_biography.tex`       | Biographies           | Journal   |
+The current source compiles to **12 pages** with **0 errors, 0 undefined
+references and 0 overfull boxes** (the only underfull warnings are long DOI/URL
+lines in the bibliography, which are harmless). Please keep it that way:
 
-All placeholders are clearly marked with `[BRACKETS]` so you can grep
-and replace as you fill in your own content.
+```bash
+grep -c "Overfull\|undefined" main.log     # expect 0
+```
+
+The layout is tuned to fit a 12-page limit (float-packing parameters and
+reduced float spacing in `preamble.tex`). See `REVIEW_NOTES.md` §E for the full
+list of page-reduction changes and how to revert them.
