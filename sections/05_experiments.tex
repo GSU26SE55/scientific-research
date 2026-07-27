@@ -29,12 +29,12 @@ seed.
   \label{tab:main}
   \centering
   \small
-  \setlength{\tabcolsep}{6pt}
-  \begin{tabular}{@{}l c l r r@{}}
-    \toprule
+  \setlength{\tabcolsep}{4.5pt}
+  \begin{tabular}{|l|c|l|r|r|}
+    \hline
     \textbf{Model} & \textbf{Params} & \textbf{Input} &
     \hd{MAE}{(\%)} & \hd{RMSE}{(\%)} \\
-    \midrule
+    \hline
     Naive last-SOH (oracle)$^{\dagger}$ & --   & Ground-truth SOH
       & 0.89 & 1.49 \\
     CNN-LSTM (baseline)                 & 61k  & Telemetry, window 30
@@ -43,7 +43,7 @@ seed.
       & 1.98 & 2.38 \\
     Mamba long $L = 4096$ (ours)        & 99k  & Telemetry, full cycle
       & 1.52 & 1.97 \\
-    \bottomrule
+    \hline
   \end{tabular}
   \tabnote{$^{\dagger}$Oracle reference only: it consumes the previous cycle's
   \emph{measured} capacity, which real deployments cannot obtain every cycle.}
@@ -102,14 +102,14 @@ leaving 16 valid folds.
   \centering
   \small
   \tabairy
-  \begin{tabular}{@{}l r r@{}}
-    \toprule
+  \begin{tabular}{|l|r|r|}
+    \hline
     \textbf{Statistic} & \textbf{MAE (\%)} & \textbf{RMSE (\%)} \\
-    \midrule
+    \hline
     Mean $\pm$ std                      & $3.91 \pm 3.27$ & $4.81 \pm 4.17$ \\
     Median                              & 2.22            & 2.55            \\
     Fold B0048 ($=$ main test battery)  & 1.47            & 1.87            \\
-    \bottomrule
+    \hline
   \end{tabular}
 \end{table}
 
@@ -127,7 +127,7 @@ extrapolation to atypical trajectories (Section~\ref{sec:discussion}).
 \subsection{Ablation and Error Analysis}
 \label{subsec:ablation}
 
-\subsubsection{(a) Component Ablation.}
+\subsubsection{Component Ablation.}
 Table~\ref{tab:ablation} quantifies each component's contribution by retraining
 the long-sequence model with one modification at a time, all else unchanged.
 
@@ -138,16 +138,16 @@ the long-sequence model with one modification at a time, all else unchanged.
   \centering
   \small
   \tabairy
-  \begin{tabular}{@{}l r r r@{}}
-    \toprule
+  \begin{tabular}{|l|r|r|r|}
+    \hline
     \textbf{Variant} & \textbf{MAE (\%)} & \textbf{RMSE (\%)} &
     \textbf{$\Delta$ MAE} \\
-    \midrule
+    \hline
     Full model                                        & 1.52 & 1.97 & --     \\
     Attention pooling $\rightarrow$ last token        & 1.93 & 2.38 & $+0.41$\\
     $d_{\mathrm{state}}$ 32 $\rightarrow$ 16          & 1.24 & 1.61 & $-0.28$\\
     No EOL-weighted loss                              & 1.32 & 1.69 & $-0.20$\\
-    \bottomrule
+    \hline
   \end{tabular}
 \end{table}
 
@@ -163,7 +163,7 @@ work. The final model keeps $d_{\mathrm{state}} = 32$ and the EOL-weighted loss,
 as the larger state dimension aids long-sequence capacity and the weighted loss
 prioritises accuracy near the replacement threshold.
 
-\subsubsection{(b) Error Analysis.}
+\subsubsection{Error Analysis.}
 The error is not uniform across SOH bands: the 80--90\,\% band shows the
 largest bias ($-4.57\,\%$), consistent with the reduced near-EOL training
 density.
@@ -195,13 +195,13 @@ training-set spectral features.
   \label{tab:anomaly}
   \centering
   \scriptsize
-  \setlength{\tabcolsep}{5pt}
-  \begin{tabular}{@{}l l l r r r r@{}}
-    \toprule
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{|l|l|l|r|r|r|r|}
+    \hline
     \textbf{Label} & \textbf{Split} & \textbf{Threshold} &
     \textbf{Precision} & \textbf{Recall} & \textbf{F1} &
     \textbf{Positive rate} \\
-    \midrule
+    \hline
     Rate & Val  & Production (score $\le -0.1$\,/\,$-0.3$)
          & 0.00 & 0.00 & 0.00 & 35.5\,\% \\
     Rate & Val  & Tuned on val (score $\le 0.213$)
@@ -210,7 +210,7 @@ training-set spectral features.
          & 0.00 & 0.00 & 0.00 & 20.6\,\% \\
     Rate & Test & Tuned on val (score $\le 0.213$)
          & 0.21 & 1.00 & 0.34 & 20.6\,\% \\
-    \bottomrule
+    \hline
   \end{tabular}
 \end{table}
 

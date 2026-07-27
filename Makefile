@@ -1,5 +1,5 @@
 # ============================================================================
-# Makefile for the IEEEtran paper
+# Makefile for the Springer LNCS paper
 # Usage:
 #   make            -> build main.pdf (full pipeline with BibTeX)
 #   make quick      -> single pdflatex pass (fast preview, no refs update)

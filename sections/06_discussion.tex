@@ -21,28 +21,33 @@ combination of patch encoding with global token aggregation.
   \centering
   \scriptsize
   \tabtight
-  \begin{tabularx}{\textwidth}{@{}L{1.7cm} L{1.75cm} L{1.1cm} Y Y Y Y@{}}
-    \toprule
+  % Ruled (grid) layout with \hline, as in the Springer LNCS samplepaper.
+  % Fixed column widths sized to the widest unbreakable words ("Architecture",
+  % "SambaMixer-", "Params"); the padding is trimmed so the X columns keep
+  % enough measure.
+  \setlength{\tabcolsep}{2.5pt}%
+  \begin{tabularx}{\textwidth}{|L{1.65cm}|L{1.8cm}|L{1.05cm}|Y|Y|Y|Y|}
+    \hline
     \textbf{Work} & \textbf{Architecture} & \textbf{Params} &
     \textbf{Protocol} & \textbf{MAE} & \textbf{Latency} &
     \textbf{Robustness} \\
-    \midrule
+    \hline
     SambaMixer-L (2025) \cite{olalde2024}
       & MambaMixer & 48.7M & 10 train / 3 eval & 0.51--1.20\,\%
       & Not reported & None \\
-    \addlinespace[2pt]
+    \hline
     TIDSIT (2025) \cite{patel2025}
       & Transformer & Not reported & 2 train / 1 eval & 0.58\,\%
       & Not reported & None \\
-    \addlinespace[2pt]
+    \hline
     Long model (this work)
       & Mamba + FiLM & 99k & 23 train / 2 val / 1 test & 1.52\,\%
       & Not measured (see window-30) & LOBO (16 folds) \\
-    \addlinespace[2pt]
+    \hline
     Window-30 model (this work)
       & Mamba + FiLM & 79k & Same as above & 1.98\,\%
       & 56.1\,ms (P95: 78.3\,ms) & --- \\
-    \bottomrule
+    \hline
   \end{tabularx}
 \end{table}
 
