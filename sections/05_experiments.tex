@@ -23,7 +23,7 @@ Table~\ref{tab:main} compares four models on held-out cell B0048 (\degC{4},
 unseen during training), all trained on the same 23/2/1 cross-battery split and
 seed.
 
-\begin{table}[t]
+\begin{table}[H]
   \caption{SOH prediction performance on held-out test cell B0048
            (23/2/1 cross-battery split).}
   \label{tab:main}
@@ -49,9 +49,9 @@ seed.
   \emph{measured} capacity, which real deployments cannot obtain every cycle.}
 \end{table}
 
-\begin{figure}[t]
+\begin{figure}[!ht]
   \centering
-  \includegraphics[width=0.78\textwidth]{soh_prediction_b0048.png}
+  \includegraphics[width=0.72\textwidth]{soh_prediction_b0048.png}
   \caption{Predicted vs.\ ground-truth SOH on B0048 -- the sole fully held-out
            test battery under the cross-battery protocol. Shaded band:
            $\pm 1$ standard deviation over 10 MC Dropout samples; per-battery
@@ -96,7 +96,7 @@ the experiment via leave-one-battery-out (LOBO) on the window-30 configuration,
 refitting scalers per fold. Of 26 cells, 10 lacked the minimum 60 cycles,
 leaving 16 valid folds.
 
-\begin{table}[t]
+\begin{table}[H]
   \caption{LOBO robustness (window-30 configuration, 16 folds).}
   \label{tab:lobo}
   \centering
@@ -131,7 +131,7 @@ extrapolation to atypical trajectories (Section~\ref{sec:discussion}).
 Table~\ref{tab:ablation} quantifies each component's contribution by retraining
 the long-sequence model with one modification at a time, all else unchanged.
 
-\begin{table}[t]
+\begin{table}[H]
   \caption{Component ablation on test cell B0048
            (long model, 23/2/1 split).}
   \label{tab:ablation}
@@ -190,7 +190,7 @@ proxy label: cycles exceeding the 90th-percentile training degradation rate
 contamination (0.1); the model (100 estimators, seed 42) was trained only on
 training-set spectral features.
 
-\begin{table}[t]
+\begin{table}[H]
   \caption{Anomaly detection results (Isolation Forest).}
   \label{tab:anomaly}
   \centering

@@ -67,23 +67,20 @@ normalised on the training distribution.
 \subsection{Architecture of MambaSOHPredictor}
 \label{subsec:architecture}
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.95\textwidth]{architecture.png}
-  \caption{Overall architecture of the proposed framework. Raw telemetry is
-           encoded into patches and processed by two MambaBlocks; the pooled
-           cycle representation is modulated by the 57-dimensional spectral
-           feature vector via FiLM to produce the SOH estimate, while the same
-           feature vector feeds an Isolation Forest whose anomaly score is
-           combined with the SOH output in a rule-based risk matrix.}
-  \label{fig:architecture}
-\end{figure}
-
 \subsubsection{Core Mamba Processing in Pure PyTorch.}
 The computational core is the Selective State Space Model (Mamba)~\cite{gu2023},
 implemented in pure PyTorch without custom CUDA kernels for cross-platform
 operation (including Windows) and direct CPU inference
-(Fig.~\ref{fig:architecture}). Each MambaBlock comprises an expansion projection
+(Fig.~\ref{fig:architecture}).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{architecture.png}
+  \caption{Overall architecture of the proposed framework.}
+  \label{fig:architecture}
+\end{figure}
+
+Each MambaBlock comprises an expansion projection
 ($E = 2$), a depthwise causal convolution (kernel~$4$), and a selective SSM scan
 whose state parameters are input-dependent~\cite{gu2023}, keeping or discarding
 information at each step---well suited to battery signals, which are mostly

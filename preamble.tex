@@ -21,6 +21,15 @@
 % NOTE: do NOT load `caption'/`subcaption' -- they override the LNCS caption
 % layout and emit an "Unknown document class" warning with llncs.cls.
 
+% ---- Exact float placement -------------------------------------------------
+% The `float' package provides the [H] specifier, which pins a table/figure at
+% the exact point in the source where it is written (like an inline object in
+% Word), instead of letting LaTeX float it to the top/bottom of another page.
+% We use [H] for every float so the manuscript's table/figure order and
+% position match the reference Word document one-to-one. `float' only adds the
+% [H] specifier here (no \restylefloat), so the LNCS caption layout is intact.
+\usepackage{float}
+
 % ---- Float packing ---------------------------------------------------------
 % This paper is float-heavy (6 tables + 2 figures). LaTeX's default placement
 % heuristics leave large slack (they cap floats at 70 % of a page and reserve
@@ -37,9 +46,24 @@
 % Trim the (generous) default space between a float and the body text. This is
 % a modest, uniform reduction to recover the whitespace LaTeX leaves around the
 % paper's 8 floats; it does not alter the type area or line spacing.
+% Because every float uses the [H] specifier (exact in-text placement), the
+% only separation that applies is \intextsep (above/below an in-text float);
+% keeping it tight lets the fixed-position tables sit close to their prose.
 \setlength{\textfloatsep}{9pt plus 2pt minus 2pt}
-\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{4pt plus 2pt minus 2pt}
 \setlength{\floatsep}{8pt plus 2pt minus 2pt}
+% llncs sets \belowcaptionskip = 10pt (the gap under each caption -- above the
+% body for tables, below the image for figures). Trim it uniformly to recover
+% whitespace around the paper's 8 captions without touching the type area.
+\setlength{\belowcaptionskip}{6pt}
+
+% ---- Bottom alignment ------------------------------------------------------
+% llncs.cls defaults to \flushbottom, which stretches the inter-paragraph glue
+% on any page that a fixed-position ([H]) float leaves short, producing large
+% gaps distributed between paragraphs. \raggedbottom instead lets that slack
+% collect naturally at the foot of the page -- exactly how a word processor
+% leaves whitespace when a table does not fit -- so the layout reads cleanly.
+\raggedbottom
 
 % ---- Tables ----------------------------------------------------------------
 % Table layout follows the Springer LNCS samplepaper.tex: ruled tables with
