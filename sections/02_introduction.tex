@@ -1,42 +1,54 @@
 %==============================================================================
 % Section 1: Introduction
+% Verbatim from Nckh-official_2.docx (P15-P18).
+%   [8]  -> iea2023        [4]  -> crippa2024     [17] -> statista2026
+%   [10] -> meng2026       [15] -> richardson2017 [5]  -> ghafari2023
+%   [22] -> yao2021        [23] -> zhao2024       [13] -> patel2025
+%   [6]  -> gu2023         [1]  -> alsmadi2025    [12] -> olalde2024
+%   [3]  -> arbaoui2024
 %==============================================================================
 \section{Introduction}
 \label{sec:introduction}
 
-Driven by the global push for sustainable transport and
-decarbonisation~\cite{iea2023}, lithium-ion batteries (LIBs) have become the
-preferred energy-storage technology for electric vehicles (EVs) and grid-scale
-renewable integration. Road transport causes about 15.9\,\% of global
-greenhouse-gas emissions, mostly from passenger cars, and is a prime target for
-electrification~\cite{crippa2024}; EU initiatives such as ``Fit for 55'' and
-the ``Electric 2035'' vision further drive LIB demand, projected to grow almost
-sevenfold over 2022--2030~\cite{statista2026}. However, complex ageing
-mechanisms---solid-electrolyte interphase growth, active-lithium depletion and
-electrode-structure deterioration---cause capacity fade and internal-resistance
-rise, threatening the long-term reliability and safety of LIB
+It is a fast-moving world of sustainable transport and
+decarbonisation~\cite{iea2023}. Lithium-ion batteries (LIBs) are the most
+favoured energy storage technology for electric vehicle (EV) and grid-scale
+renewable integration applications. Road transport accounts for about 15.9\% of
+global greenhouse gas emissions, mainly from passenger cars, and should be
+strongly electrified~\cite{crippa2024}. Policy initiatives from the EU such as
+the ``Fit for 55'' package and the ``Electric 2035'' vision are supportive of
+the LIB market as well. The LIBs market demand is expected to grow by almost 7
+folds during 2022--2030~\cite{statista2026}. Complex ageing mechanisms,
+including solid-electrolyte interphase growth, active lithium depletion and
+electrode structure deterioration, lead to capacity fade and internal resistance
+rise, threatening the reliability and safety of long-term LIB
 systems~\cite{meng2026,richardson2017}.
 
-Battery health monitoring has shifted from physics-based methods (equivalent
-circuit models, electrochemical simulation) to data-driven deep
-learning~\cite{ghafari2023}. Recurrent architectures such as LSTM model
-degradation trajectories well but suffer from a recurrence bottleneck on long
-sequences~\cite{yao2021,zhao2024}. Transformer self-attention addresses this
-but is quadratic, $O(L^{2})$, limiting real-time
-deployment~\cite{patel2025}. Mamba and selective state space models break this
-trade-off, matching Transformer accuracy at $O(L)$ linear
-complexity~\cite{gu2023}. A key gap remains, however: most Mamba-based battery
-studies are unimodal, using only macro-telemetry and overlooking
-frequency-domain spectral features that are sensitive to the internal
-degradation fingerprint~\cite{alsmadi2025,meng2026,olalde2024}.
+The trend of battery health monitoring has been changed from physics-based
+methods such as equivalent circuit model and electrochemical simulation to
+data-driven deep learning~\cite{ghafari2023}. Recurrent architectures like LSTM
+have achieved promising results in modelling degradation trajectories. However,
+they suffer from the recurrence bottleneck in modelling long
+sequences~\cite{yao2021,zhao2024}. This problem is addressed by
+transformer-based models with self-attention but are quadratic in complexity
+$O(L^{2})$ limiting their real-time deployment~\cite{patel2025}. Notably, Mamba
+and selective state space models break this trade-off and reach the performance
+of Transformers with $O(L)$ linear complexity~\cite{gu2023}. But then there's a
+big hole. The majority of Mamba-based batteries are unimodal studies that only
+utilise macro-telemetry and overlook the spectral features in the frequency
+domain that are sensitive to the internal degradation
+fingerprint~\cite{alsmadi2025,meng2026,olalde2024}.
 
-Moreover, existing methods mostly estimate SOH and detect anomalies
-separately, which is insufficient for real-time detection of anomalies from
-transient events or sensor faults~\cite{arbaoui2024}, and few effective
-conditioning mechanisms bridge the distribution gap between high-dimensional
+Moreover, the existing methods mainly focus on the individual estimation of SOH
+and anomaly detection, which is not sufficient for real-time detection of
+anomalous patterns due to transient events or sensor
+anomalies~\cite{arbaoui2024}. Furthermore, few effective conditioning
+mechanisms exist to bridge the distribution gap between high-dimensional
 temporal sequences and low-dimensional spectral features~\cite{meng2026}.
-Building on this, we propose MambaSOHPredictor, a selective state space model
-conditioned on physics-informed spectral features through Feature-wise Linear
-Modulation (FiLM). Amenable to edge deployment, it supports efficient, robust
-SOH prediction with simultaneous Isolation Forest anomaly detection for
-reliable real-time battery health management.
+Building upon prior work, we propose MambaSOHPredictor, a Selective State Space
+% NOTE: the source manuscript spells this "MambaSOHPRedictor" here (capital R);
+% corrected to the form used everywhere else in the paper.
+Model conditioned on physics informed spectral features through Feature-wise
+Linear Modulation (FiLM). The architecture is amenable to edge implementations,
+and supports efficient and robust SOH prediction and simultaneous Isolation
+Forest anomaly detection, enabling reliable real-time battery health management.

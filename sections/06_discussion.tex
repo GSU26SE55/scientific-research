@@ -1,85 +1,95 @@
 %==============================================================================
 % Section 5: Discussion
+% Verbatim from Nckh-official_2.docx (P86-P96).
 %==============================================================================
 \section{Discussion}
 \label{sec:discussion}
 
-The 1.52\,\% MAE under the strict cross-battery protocol shows the selective
-state space mechanism captures long-range degradation dependencies without the
-recurrence bottleneck of LSTMs or the quadratic cost of
-Transformers~\cite{gu2023,meng2026,zhao2024}.
+The 1.52\% MAE of the long-sequence model on the strict cross-battery protocol
+indicates that the selective state space mechanism is able to capture long-range
+degradation dependencies without the recurrence bottleneck of LSTM-based models
+or the quadratic cost of Transformers~\cite{gu2023,meng2026,zhao2024}.
 
-Attention pooling surpassing last-token aggregation
-(Section~\ref{subsec:ablation}) indicates that degradation signatures are
-distributed rather than localised in a single terminal state, consistent with
-recent sequence-learning studies~\cite{meng2026,nie2023} and supporting our
-combination of patch encoding with global token aggregation.
+Our observation that attention pooling surpasses last-token aggregation aligns
+with the ablation analysis in Section~\ref{subsec:ablation}, indicating that the
+signatures of degradation are spread out instead of being localised in a single
+terminal state during the discharge process, consistent with recent
+sequence-learning studies~\cite{meng2026,nie2023} and confirming our design
+choice for combining patch encoding with global token aggregation to maintain
+local and long-range degradation properties.
 
+% Table 6 of the source manuscript.
 \begin{table}[H]
-  \caption{Comparison with recent cross-battery studies on the NASA dataset.}
+  \caption{Comparison with Recent Cross-Battery Studies on the NASA Dataset}
   \label{tab:comparison}
   \centering
   \scriptsize
   \linespread{0.92}\selectfont
   \tabtight
-  % Ruled (grid) layout with \hline, as in the Springer LNCS samplepaper.
   % Fixed column widths sized to the widest unbreakable words ("Architecture",
-  % "SambaMixer-", "Params"); the padding is trimmed so the X columns keep
+  % "SambaMixer-", "Parameters"); the padding is trimmed so the X columns keep
   % enough measure.
-  \setlength{\tabcolsep}{2.5pt}%
-  \begin{tabularx}{\textwidth}{|L{1.65cm}|L{1.8cm}|L{1.05cm}|Y|Y|Y|Y|}
+  \setlength{\tabcolsep}{2pt}%
+  \begin{tabularx}{\textwidth}{|M{1.7cm}|M{1.8cm}|M{1.6cm}|Y|Y|Y|M{1.6cm}|}
     \hline
-    \textbf{Work} & \textbf{Architecture} & \textbf{Params} &
+    \textbf{Work} & \textbf{Architecture} & \textbf{Parameters} &
     \textbf{Protocol} & \textbf{MAE} & \textbf{Latency} &
     \textbf{Robustness} \\
     \hline
-    SambaMixer-L (2025) \cite{olalde2024}
-      & MambaMixer & 48.7M & 10 train / 3 eval & 0.51--1.20\,\%
+    SambaMixer-L (2025)
+      & MambaMixer & 48.7M & 10 train / 3 eval & 0.51--1.20\%
       & Not reported & None \\
     \hline
-    TIDSIT (2025) \cite{patel2025}
-      & Transformer & Not reported & 2 train / 1 eval & 0.58\,\%
+    TIDSIT (2025)
+      & Transformer & Not reported & 2 train / 1 eval & 0.58\%
       & Not reported & None \\
     \hline
-    Long model (this work)
-      & Mamba + FiLM & 99k & 23 train / 2 val / 1 test & 1.52\,\%
+    Long model (This work)
+      & Mamba + FiLM & 99k & 23 train / 2 val / 1 test & 1.52\%
       & Not measured (see window-30) & LOBO (16 folds) \\
     \hline
-    Window-30 model (this work)
-      & Mamba + FiLM & 79k & Same as above & 1.98\,\%
+    Window-30 model (This work)
+      & Mamba + FiLM & 79k & Same as above & 1.98\%
       & 56.1\,ms (P95: 78.3\,ms) & --- \\
     \hline
   \end{tabularx}
+  \srcnote{Source: Authors' processing, 2026}
 \end{table}
 
-Unlike previous multimodal Mamba studies that inject electrochemical impedance
-spectroscopy (EIS)~\cite{meng2026}, our framework extracts FFT-based spectral
-descriptors directly from discharge telemetry via FiLM conditioning, avoiding
-specialised EIS hardware while still exploiting the higher degradation
-sensitivity of frequency-domain over raw time-domain
+The proposed framework does not depend on the injection of electrochemical
+knowledge using electrochemical impedance spectroscopy (EIS) as was done in
+previous multimodal Mamba studies~\cite{meng2026} but instead extracts FFT-based
+spectral descriptors directly from discharge telemetry via FiLM conditioning,
+thus bypassing the need for the specialised measurement hardware required by
+EIS, while still taking advantage of the higher degradation sensitivity of
+frequency-domain indicators compared to raw time-domain
 signals~\cite{alsmadi2025,yang2023}.
 
-The data-centric improvement in Section~\ref{subsec:main-results}, where adding
-a single \degC{4} battery reduced the MAE without any architectural change,
-suggests operating-condition coverage can matter more than model complexity for
-cross-battery generalisation, consistent with reports that prognostics
-performance loss stems from distribution shift rather than insufficient network
-capacity~\cite{meng2026,yang2023}.
+The data-centric improvement shown in Section~\ref{subsec:main-results}, where
+the addition of a single additional \degC{4} battery reduced MAE without any
+architectural modification, reinforces the notion that operating-condition
+coverage might be more important than model complexity for cross-battery
+generalisation, consistent with prior research indicating that performance
+degradation in battery prognostics is often caused by distribution shift rather
+than insufficient network capacity~\cite{meng2026,yang2023}.
 
-This accuracy--latency trade-off -- compact for real-time edge alerts,
-long-sequence for periodic cloud diagnostics
-(Section~\ref{subsec:latency}) -- mirrors recent Mamba-versus-Transformer
-comparisons for resource-constrained deployment~\cite{olalde2024}.
+This accuracy--latency trade-off compact configuration for real-time edge
+alerts, long-sequence configuration for periodic cloud diagnostics
+(Section~\ref{subsec:latency}) is analogous to recent comparisons between Mamba
+and Transformer architectures for resource-constrained
+deployment~\cite{olalde2024}.
 
-As reported in Section~\ref{subsec:anomaly}, the low proxy-label F1 positions
-the Isolation Forest as a complementary early-warning module rather than an
-autonomous fault classifier -- a limitation shared by unsupervised anomaly
-detection, where proxy labels cannot fully represent real operational
+As per Section~\ref{subsec:anomaly}, the tiny F1 obtained using proxy labels is
+enough for Isolation Forest as a complementary early-warning module rather than
+an autonomous fault classifier, a limitation shared by unsupervised anomaly
+detection in general where proxy labels cannot fully represent real operational
 failures~\cite{aljohani2026,arbaoui2024}.
 
-Three limitations remain: (i) validation on the NASA dataset only (few cells,
-single chemistry); (ii) large LOBO variation for batteries with rare
-degradation trajectories; and (iii) anomaly detection on proxy rather than real
-fault labels. Future work should therefore validate on larger multi-chemistry
-datasets and real BMS fault logs, and explore semi-supervised or continual
-learning for robustness.
+Three limitations need to be recognised: (i) validation was limited to the NASA
+dataset (limited cells, single chemistry); (ii) despite the more realistic
+evaluation, large LOBO performance variation persisted for batteries with rare
+degradation trajectories; (iii) anomaly detection was based on proxy labels
+without access to actual fault labels. Therefore, future work should include
+validation on larger multi-chemistry datasets and real BMS fault logs, as well
+as exploring semi-supervised or continual learning approaches for better
+robustness.

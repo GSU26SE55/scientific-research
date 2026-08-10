@@ -1,5 +1,8 @@
 %==============================================================================
 % Section 4: Experimental Results
+% Verbatim from Nckh-official_2.docx (P56-P85).
+% The source numbers these subsections 4.1-4.6 by hand; the numbers are dropped
+% because llncs.cls produces exactly the same numbering automatically.
 %==============================================================================
 \section{Experimental Results}
 \label{sec:experiments}
@@ -8,216 +11,241 @@
 \subsection{Experimental Setup}
 \label{subsec:setup}
 
-Prediction accuracy uses MAE and RMSE in \%\,SOH, and anomaly detection uses
-precision, recall and F1-score, against industrial targets
-$\mathrm{MAE} < 2\,\%$ and $\mathrm{RMSE} < 3\,\%$. Models were trained in a
-Kaggle GPU environment in pure PyTorch (no custom CUDA kernels); latency was
-benchmarked on an Intel Core i7-14650HX CPU. All experiments use a fixed seed of
-42 and the cross-battery protocol of Section~\ref{subsec:dataset}.
+Prediction accuracy was assessed using mean absolute error (MAE) and root mean
+square error (RMSE) in \%SOH. Performance evaluation for anomaly detection was
+done using Precision, Recall and F1-score. The target thresholds were defined by
+industrial requirements: MAE $< 2\%$ and RMSE $< 3\%$.
+
+All models were trained in a Kaggle GPU environment. Our implementation is in
+pure PyTorch and does not depend on custom CUDA kernels. Inference latency
+benchmarks were run on an Intel Core i7-14650HX CPU. For all experiments we
+employed a fixed random seed of 42 and consistently applied the cross-battery
+data splitting protocol described in Section~\ref{subsec:dataset}.
 
 % ---- 4.2 --------------------------------------------------------------------
 \subsection{Main Results}
 \label{subsec:main-results}
 
-Table~\ref{tab:main} compares four models on held-out cell B0048 (\degC{4},
-unseen during training), all trained on the same 23/2/1 cross-battery split and
-seed.
+Table~\ref{tab:main} compares the SOH prediction errors of four models on the
+held-out test cell B0048 (operated at \degC{4} and completely unseen during
+training). All models were trained using the same 23/2/1 cross-battery split and
+random seed.
 
+% Table 2 of the source manuscript.
 \begin{table}[H]
-  \caption{SOH prediction performance on held-out test cell B0048
-           (23/2/1 cross-battery split).}
+  \caption{SOH Prediction Performance on Held-Out Test Cell B0048
+           (23/2/1 Cross-Battery Split)}
   \label{tab:main}
   \centering
-  \small
-  \setlength{\tabcolsep}{4.5pt}
-  \begin{tabular}{|l|c|l|r|r|}
+  % \scriptsize (not \small): the source manuscript writes the units on the same
+  % line as the metric ("MAE (%)", "RMSE (%)"), which widens those two columns
+  % by 36.6pt. At \small the table then needs 383.7pt against the 347.1pt LNCS
+  % measure -- it does not fit even with zero inter-column padding. One size
+  % down it needs 336.5pt, so every row still occupies a single line. This is
+  % also the size used by Tables 1, 5 and 6.
+  \scriptsize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{|c|c|c|c|c|}
     \hline
-    \textbf{Model} & \textbf{Params} & \textbf{Input} &
-    \hd{MAE}{(\%)} & \hd{RMSE}{(\%)} \\
+    \textbf{Model} & \textbf{\#Params} & \textbf{Input} &
+    \textbf{MAE (\%)} & \textbf{RMSE (\%)} \\
     \hline
     Naive last-SOH (oracle)$^{\dagger}$ & --   & Ground-truth SOH
       & 0.89 & 1.49 \\
-    CNN-LSTM (baseline)                 & 61k  & Telemetry, window 30
+    CNN-LSTM (baseline)                 & 61k  & telemetry window 30
       & 4.90 & 6.49 \\
-    Mamba window-30 (ours)              & 79k  & Telemetry, window 30
+    Mamba window-30 (ours)              & 79k  & telemetry window 30
       & 1.98 & 2.38 \\
-    Mamba long $L = 4096$ (ours)        & 99k  & Telemetry, full cycle
+    Mamba long $L=4096$ (ours)          & 99k  & telemetry full cycle
       & 1.52 & 1.97 \\
     \hline
   \end{tabular}
-  \tabnote{$^{\dagger}$Oracle reference only: it consumes the previous cycle's
-  \emph{measured} capacity, which real deployments cannot obtain every cycle.}
+  % NOTE: the source marks this row with a dagger but never defines the symbol
+  % anywhere in the document (it has no footnotes). The meaning is given in the
+  % prose below. To add an explicit table note instead, uncomment:
+  % \srcnote{$^{\dagger}$Oracle reference only: it consumes the previous cycle's
+  % \emph{measured} capacity, which real deployments cannot obtain every cycle.}
 \end{table}
 
-\begin{figure}[!ht]
+% Figure 2 of the source manuscript.
+\begin{figure}[H]
   \centering
-  \includegraphics[width=0.72\textwidth]{soh_prediction_b0048.png}
+  \includegraphics[width=0.78\textwidth]{soh_prediction_b0048.png}
   \caption{Predicted vs.\ ground-truth SOH on B0048 -- the sole fully held-out
-           test battery under the cross-battery protocol. Shaded band:
-           $\pm 1$ standard deviation over 10 MC Dropout samples; per-battery
-           robustness is reported in Table~\ref{tab:lobo} (LOBO).}
+           test battery under the cross-battery protocol. Shaded band: $\pm 1$
+           std over 10 MC Dropout samples; per-battery robustness is reported in
+           Table~\ref{tab:lobo} (LOBO)}
   \label{fig:prediction-b0048}
 \end{figure}
 
-Among telemetry-only models -- the realistic deployment scenario -- the
-long-sequence Mamba configuration achieved an MAE of 1.52\,\%, below the 2\,\%
-target and a 69\,\% relative reduction versus the CNN-LSTM baseline (4.90\,\%),
-despite the test cell being entirely unseen at an underrepresented \degC{4}. The
-compact window-30 variant likewise cut relative error by 60\,\% (MAE 1.98\,\%),
-while CNN-LSTM's weak cross-battery generalisation further supports the
-selective state space choice.
+Among models relying solely on raw telemetry, the realistic deployment scenario,
+the long-sequence Mamba configuration achieved an MAE of 1.52\%, below the 2\%
+industrial target and a 69\% relative reduction versus the CNN-LSTM baseline
+(4.90\%), despite the test cell being entirely unseen and operating at an
+underrepresented \degC{4}. The compact window-30 variant likewise reduced
+relative error by 60\% (MAE 1.98\%), while CNN-LSTM's limited cross-battery
+generalization further supports the selective state space choice.
 
-The naive baseline (the previous cycle's measured SOH) attained an MAE of
-0.89\,\%, outperforming all learned models, but it is not a viable competitor:
-it requires per-cycle capacity measurements that real systems cannot obtain,
-and serves only as an oracle reference for the harder, realistic task of
-estimating SOH from telemetry alone. As noted in
-Section~\ref{subsec:dataset}, direct comparison with intra-cell split studies
-is avoided here (see Section~\ref{sec:discussion} for a partial exception).
-% NOTE: the source manuscript wrote "As noted in Section 1"; the cross-battery
-% protocol is actually introduced in Section 3.1, so the cross-reference has
-% been retargeted there. Please confirm.
+The naive baseline (previous cycle's measured SOH) attained an MAE of 0.89\%,
+outperforming all learned models. We report this honestly, but it is not a
+viable competing approach since it requires capacity measurements real-world
+systems cannot obtain every cycle; its value is as an oracle reference for the
+harder, realistic task addressed above: estimating SOH from telemetry alone. As
+noted in Section~\ref{sec:introduction}, direct comparison with intra-cell split
+studies is avoided here (see Section~\ref{sec:discussion} for a partial
+exception).
+% NOTE: reproduced exactly as the source, which says "As noted in Section 1".
+% The cross-battery protocol is actually introduced in Section 3.1
+% (\ref{subsec:dataset}); change the \ref above if Section 3.1 was intended.
 
 A data-centric refinement further improved the window-30 model: per-band
 analysis (Section~\ref{subsec:ablation}) revealed a systematic negative bias in
-the high-SOH region under \degC{4}, where training coverage reached only
-67.2\,\% SOH. Adding one \degC{4} cell (B0047, covering SOH 0--83.7\,\%), with
-no architectural or hyperparameter change, cut the MAE on B0048 from 1.98\,\% to
-1.34\,\% (RMSE 2.38\,\% $\rightarrow$ 1.84\,\%; reported separately due to the
-modified 24/1/1 split), showing that data coverage can matter as much as
-architecture.
+the high-SOH region under \degC{4}, where training coverage extended only to
+67.2\% SOH. Adding one additional \degC{4} cell (B0047, covering SOH
+0--83.7\%), with no architectural or hyperparameter changes, reduced MAE on
+B0048 from 1.98\% to 1.34\% (RMSE 2.38\% $\rightarrow$ 1.84\%; reported
+separately due to the modified 24/1/1 split), underscoring that training data
+coverage can matter as much as architectural choices.
 
 % ---- 4.3 --------------------------------------------------------------------
 \subsection{Robustness Evaluation -- Leave-One-Battery-Out}
 \label{subsec:lobo}
 
-A single held-out cell cannot establish statistical reliability, so we repeated
-the experiment via leave-one-battery-out (LOBO) on the window-30 configuration,
-refitting scalers per fold. Of 26 cells, 10 lacked the minimum 60 cycles,
-leaving 16 valid folds.
+A single held-out test cell cannot establish statistical reliability, so we
+repeated the experiment via leave-one-battery-out (LOBO) on the window-30
+configuration, refitting scalers independently per fold. Of 26 cells, 10 lacked
+the minimum 60 cycles for reliable evaluation, leaving 16 valid folds.
 
+% Table 3 of the source manuscript.
 \begin{table}[H]
-  \caption{LOBO robustness (window-30 configuration, 16 folds).}
+  \caption{LOBO Robustness (Window-30 Configuration, 16 Folds)}
   \label{tab:lobo}
   \centering
   \small
   \tabairy
-  \begin{tabular}{|l|r|r|}
+  \begin{tabular}{|c|c|c|}
     \hline
-    \textbf{Statistic} & \textbf{MAE (\%)} & \textbf{RMSE (\%)} \\
+    \textbf{Model} & \textbf{MAE (\%)} & \textbf{RMSE (\%)} \\
     \hline
-    Mean $\pm$ std                      & $3.91 \pm 3.27$ & $4.81 \pm 4.17$ \\
-    Median                              & 2.22            & 2.55            \\
-    Fold B0048 ($=$ main test battery)  & 1.47            & 1.87            \\
+    Mean $\pm$ std                        & $3.91 \pm 3.27$ & $4.81 \pm 4.17$ \\
+    Median                                & 2.22            & 2.55            \\
+    Fold B0048 ($=$ main battery testing) & 1.47            & 1.87            \\
     \hline
   \end{tabular}
+  \srcnote{Source: Authors' processing, 2026}
 \end{table}
 
-Given the considerable variability, we report the full distribution rather than
-aggregates alone. Nine of 16 folds achieved $\mathrm{MAE} \le 2.3\,\%$ (best:
-B0042, 1.40\,\%); the B0048 fold (Table~\ref{tab:lobo}) is consistent with
-Table~\ref{tab:main}, confirming its selection was not favourably biased. Larger
-errors concentrated in cells confined to low-SOH regimes: B0045 (14.61\,\%,
-never exceeding 54\,\% SOH), B0033 (7.55\,\%) and B0054--B0056 (4.4--6.3\,\%),
-forcing extrapolation into SOH regions absent from training. LOBO thus confirms
-robustness in typical regimes while revealing a clear failure mode: poor
-extrapolation to atypical trajectories (Section~\ref{sec:discussion}).
+Results reveal considerable variability, so we report the full distribution
+rather than aggregates alone. Nine of 16 folds achieved MAE $\le 2.3\%$ (best:
+B0042, 1.40\%); the B0048 fold result (Table~\ref{tab:lobo}) is consistent with
+Table~\ref{tab:main}, confirming its selection was not favorably biased. Larger
+errors concentrated in cells confined almost entirely to low-SOH regimes: B0045
+(14.61\%, never exceeding 54\% SOH), B0033 (7.55\%), B0054--B0056
+(4.4--6.3\%), forcing extrapolation into SOH regions absent from training data.
+LOBO thus confirms robustness in typical regimes while revealing a clear failure
+mode: poor extrapolation to atypical trajectories, discussed further in
+Section~\ref{sec:discussion}.
 
 % ---- 4.4 --------------------------------------------------------------------
 \subsection{Ablation and Error Analysis}
 \label{subsec:ablation}
 
-\subsubsection{Component Ablation.}
-Table~\ref{tab:ablation} quantifies each component's contribution by retraining
-the long-sequence model with one modification at a time, all else unchanged.
+\subsubsection{(a) Component Ablation.}
+Table~\ref{tab:ablation} quantifies the contribution of individual components by
+retraining the long-sequence model with each modification while keeping all
+other conditions unchanged.
 
+% Table 4 of the source manuscript.
 \begin{table}[H]
-  \caption{Component ablation on test cell B0048
-           (long model, 23/2/1 split).}
+  \caption{Component Ablation on Test Cell B0048 (Long Model, 23/2/1 Split)}
   \label{tab:ablation}
   \centering
   \small
   \tabairy
-  \begin{tabular}{|l|r|r|r|}
+  \begin{tabular}{|c|c|c|c|}
     \hline
     \textbf{Variant} & \textbf{MAE (\%)} & \textbf{RMSE (\%)} &
     \textbf{$\Delta$ MAE} \\
     \hline
-    Full model                                        & 1.52 & 1.97 & --     \\
-    Attention pooling $\rightarrow$ last token        & 1.93 & 2.38 & $+0.41$\\
-    $d_{\mathrm{state}}$ 32 $\rightarrow$ 16          & 1.24 & 1.61 & $-0.28$\\
-    No EOL-weighted loss                              & 1.32 & 1.69 & $-0.20$\\
+    Full model                                    & 1.52 & 1.97 & --      \\
+    Attention pooling $\rightarrow$ last token    & 1.93 & 2.38 & $+0.41$ \\
+    \texttt{d\_state} 32 $\rightarrow$ 16         & 1.24 & 1.61 & $-0.28$ \\
+    No EOL-weighted loss                          & 1.32 & 1.69 & $-0.20$ \\
     \hline
   \end{tabular}
+  \srcnote{Source: Authors' processing, 2026}
 \end{table}
 
-Attention pooling contributed most: replacing it with last-token pooling raised
-the MAE by 0.41 points (Table~\ref{tab:ablation}), the only degrading change,
-showing degradation information is distributed across the sequence rather than
-in the final token. Reducing $d_{\mathrm{state}}$ ($32 \rightarrow 16$) and
-removing the EOL-weighted loss slightly improved the MAE on B0048, but with a
-single test cell and few near-EOL samples these gains likely reflect
-cell-specific variability rather than general superiority, consistent with the
-LOBO spread (Section~\ref{subsec:lobo}); a full LOBO ablation is left for future
-work. The final model keeps $d_{\mathrm{state}} = 32$ and the EOL-weighted loss,
-as the larger state dimension aids long-sequence capacity and the weighted loss
-prioritises accuracy near the replacement threshold.
+Attention pooling contributed most: replacing it with last-token pooling
+increased MAE by 0.41 percentage points (Table~\ref{tab:ablation}), the only
+degrading change, indicating degradation information is distributed across the
+sequence rather than concentrated in the final token. Reducing
+\texttt{d\_state} ($32 \rightarrow 16$) and removing the EOL-weighted loss both
+slightly improved MAE on B0048, but given the single test cell and few near-EOL
+samples, these gains likely reflect cell-specific variability rather than
+general superiority, consistent with the LOBO spread
+(Section~\ref{subsec:lobo}); a full LOBO ablation is left for future work. The
+final model retains \texttt{d\_state} $= 32$ and the EOL-weighted loss, since
+the larger state dimension aids long-sequence capacity and the weighted loss
+prioritizes accuracy near the replacement threshold.
 
-\subsubsection{Error Analysis.}
-The error is not uniform across SOH bands: the 80--90\,\% band shows the
-largest bias ($-4.57\,\%$), consistent with the reduced near-EOL training
-density.
+\subsubsection{(b) Error is not uniform across SOH bands.}
+The 80--90\% band shows the largest bias ($-4.57\%$), consistent with reduced
+near-EOL training density.
 
 % ---- 4.5 --------------------------------------------------------------------
 \subsection{Inference Latency}
 \label{subsec:latency}
 
-Latency was measured end-to-end via gRPC (scaler normalisation, feature
-extraction, batched 10-sample MC Dropout inference) over 50 calls on an Intel
-Core i7-14650HX CPU. The window-30 model averaged 56.1\,ms (P95 $=$ 78.3\,ms),
-meeting the $<100$\,ms real-time requirement for P1 alerts; the negligible gap
-versus direct inference (58.7\,ms) confirms minimal communication overhead. The
-long-sequence model trades real-time capability for accuracy, better suited to
-periodic offline evaluation.
+Latency was measured end-to-end via gRPC (scaler normalization, feature
+extraction, batched 10-sample MC Dropout inference) across 50 repeated calls on
+an Intel Core i7-14650HX CPU. The window-30 model achieved a mean of 56.1\,ms
+(P95 $= 78.3$\,ms), satisfying the $<100$\,ms real-time requirement for P1
+alerts; the negligible gap versus direct inference (58.7\,ms mean) confirms
+minimal communication overhead. The long-sequence model trades this real-time
+capability for higher accuracy, making it more suitable for periodic offline
+evaluation.
 
 % ---- 4.6 --------------------------------------------------------------------
 \subsection{Anomaly Detection}
 \label{subsec:anomaly}
 
-As the NASA dataset lacks explicit fault annotations, we defined a rate-based
-proxy label: cycles exceeding the 90th-percentile training degradation rate
-(0.4833\,\% SOH/cycle) are anomalous, matching the Isolation Forest
-contamination (0.1); the model (100 estimators, seed 42) was trained only on
-training-set spectral features.
+Because the NASA dataset lacks explicit fault annotations, a rate-based proxy
+label was defined: cycles exceeding the 90th-percentile training degradation
+rate (0.4833\% SOH/cycle) were considered anomalous, consistent with the
+Isolation Forest contamination rate (0.1); the model (100 estimators, seed
+$= 42$) was trained exclusively on training-set spectral features.
 
+% Table 5 of the source manuscript.
 \begin{table}[H]
-  \caption{Anomaly detection results (Isolation Forest).}
+  \caption{Anomaly detection (IsolationForest)}
   \label{tab:anomaly}
   \centering
   \scriptsize
   \setlength{\tabcolsep}{4pt}
-  \begin{tabular}{|l|l|l|r|r|r|r|}
+  \begin{tabular}{|c|c|c|c|c|c|c|}
     \hline
     \textbf{Label} & \textbf{Split} & \textbf{Threshold} &
     \textbf{Precision} & \textbf{Recall} & \textbf{F1} &
-    \textbf{Positive rate} \\
+    \textbf{Positive Rate} \\
     \hline
-    Rate & Val  & Production (score $\le -0.1$\,/\,$-0.3$)
-         & 0.00 & 0.00 & 0.00 & 35.5\,\% \\
-    Rate & Val  & Tuned on val (score $\le 0.213$)
-         & 0.36 & 1.00 & 0.53 & 35.5\,\% \\
-    Rate & Test & Production (score $\le -0.1$\,/\,$-0.3$)
-         & 0.00 & 0.00 & 0.00 & 20.6\,\% \\
-    Rate & Test & Tuned on val (score $\le 0.213$)
-         & 0.21 & 1.00 & 0.34 & 20.6\,\% \\
+    rate & val  & production (score $\le -0.1$\,/\,$-0.3$)
+         & 0.00 & 0.00 & 0.00 & 35.5\% \\
+    rate & val  & tuned on val (score $\le 0.213$)
+         & 0.36 & 1.00 & 0.53 & 35.5\% \\
+    rate & test & production (score $\le -0.1$\,/\,$-0.3$)
+         & 0.00 & 0.00 & 0.00 & 20.6\% \\
+    rate & test & tuned on val (score $\le 0.213$)
+         & 0.21 & 1.00 & 0.34 & 20.6\% \\
     \hline
   \end{tabular}
+  \srcnote{Source: Authors' processing, 2026}
 \end{table}
 
-The production threshold failed to detect anomalies ($\mathrm{F1} = 0$); after
-tuning on the validation set, the test F1 improved to 0.34 (100\,\% recall,
-0.21 precision), positioning the approach as a high-sensitivity early-warning
-filter requiring human verification rather than an autonomous fault detector.
-Since this proxy label reflects capacity degradation rather than genuine
-faults, future work should incorporate real IoT fault labels and
-semi-supervised methods (Section~\ref{sec:discussion}).
+The production threshold failed to detect anomalies (F1 $= 0$); after tuning on
+the validation set, test F1 improved to 0.34 (100\% recall, 0.21 precision),
+positioning the approach as a high-sensitivity early-warning filter requiring
+human verification rather than an autonomous fault detector. Since this proxy
+label reflects capacity degradation rather than genuine faults, future work
+should incorporate real IoT fault labels and semi-supervised methods
+(Section~\ref{sec:discussion}).

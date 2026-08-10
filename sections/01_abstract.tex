@@ -1,37 +1,33 @@
 %==============================================================================
-% Abstract + Keywords
-% (In the LNCS class both live inside the `abstract' environment.)
+% Abstract + Keywords  --  verbatim from Nckh-official_2.docx (P13, P14)
+% In the LNCS class both live inside the `abstract' environment.
 %==============================================================================
 
 \begin{abstract}
-The fast development of solar energy systems and electric vehicle applications
-requires robust monitoring of lithium-ion batteries, since the failure to
-detect capacity degradation can cause huge economic losses and safety concerns.
-Although the State of Health (SOH) is the most important indicator to determine
-the condition of the battery, accurate and real-time estimation from raw sensor
-data is still a big computational and methodological challenge. Conventional
-recurrent models struggle to learn long-term temporal dependencies in
-degradation cycles, and Transformer architectures are prohibitively expensive
-for deployment in edge environments. In this paper, we propose
-MambaSOHPredictor, a lightweight framework based on the Selective State Space
-Model (Mamba) with physics-informed spectral feature conditioning. The
-architecture is available in two configurations: a high-accuracy long-sequence
-model ($L = 4096$) for full discharge cycles, or a compact 30-step window
-variant for real-time edge inference. MambaBlocks process the multivariate
-time-series data (voltage, current, temperature) with linear $O(L)$ complexity.
-Feature-wise Linear Modulation (FiLM) is used with a 57-dimensional cycle-level
-spectral and statistical feature vector. Uncertainty estimation is done by
-Monte Carlo Dropout, and anomaly detection is done by Isolation Forest in the
-same feature space at the same time. Combining the outputs gives us a risk
-matrix to prioritise predictive maintenance. The long-sequence model under a
-strict cross-battery protocol yields an MAE of 1.52\,\% and an RMSE of
-1.97\,\% on the NASA Ames dataset, surpassing industrial thresholds. The
-compact configuration can complete inference in less than 100\,ms on CPU, which
-demonstrates practical feasibility for real-time edge deployment without GPU
-acceleration.
+Solar energy and electric vehicle growth depend on lithium-ion battery
+monitoring. Capacity decrease may cause considerable economic losses and
+safety problems if ignored. State of Health (SOH) is a key battery health
+indicator, but real-time estimation from raw sensor data is computationally
+and methodologically difficult. Transformer designs are too expensive for
+edge situations, and traditional recurrent models struggle to learn
+long-term temporal connections in degradation cycles. We provide
+MambaSOHPredictor, a lightweight Selective State Space Model (Mamba)
+framework with physics-informed spectral feature conditioning. The
+architecture has a compact 30-step window variant for real-time edge
+inference and a high-accuracy long-sequence model ($L = 4096$) for full
+discharge cycles. With linear $O(L)$ complexity, MambaBlocks processes
+multivariate time-series data (voltage, current, temperature). A
+57-dimensional cycle-level spectral and statistical feature vector is used
+for FiLM. Uncertainty estimation employs Monte Carlo Dropout, while anomaly
+detection uses Isolation Forest simultaneously in the same feature space. To
+prioritise predictive maintenance, the results are combined into a risk
+matrix. The long-sequence model obtains an MAE of 1.52\% and an RMSE of
+1.97\% on the NASA Ames dataset under a strict cross-battery approach, exceeding
+industry norms. This modest setup can infer in under 100\,ms on CPU,
+enabling real-time edge deployment without GPU acceleration.
 
 \keywords{Lithium-ion batteries \and State of Health (SOH)
-  \and Mamba state space model \and Spectral feature conditioning
+  \and Mamba State Space Model \and Spectral feature conditioning
   \and FiLM \and Anomaly detection \and Edge computing
   \and Predictive maintenance.}
 \end{abstract}

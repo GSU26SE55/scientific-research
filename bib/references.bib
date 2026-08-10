@@ -50,13 +50,17 @@
 }
 
 % ---- Crippa et al. (2024) -- EDGAR GHG emissions report --------------------
-% NOTE: crippa2024 is a 16-author JRC/EDGAR institutional report; its long
-% author list is abbreviated with `et al.' (via "and others") to respect the
-% page limit -- standard practice for large-team technical reports. To restore
-% the full list, replace "and others" with the remaining 13 author names.
+% All 16 authors are listed, exactly as in the source manuscript. If the page
+% limit ever becomes tight, replacing everything after "Pagani, F." with
+% "and others" prints "et al." and saves ~3 lines.
 % (BibTeX does NOT allow % comments *inside* an entry, so this note lives here.)
 @techreport{crippa2024,
-  author      = {Crippa, M. and Guizzardi, D. and Pagani, F. and others},
+  author      = {Crippa, M. and Guizzardi, D. and Pagani, F. and Banja, M. and
+                 Muntean, M. and Schaaf, E. and Becker, W. and
+                 {Monforti-Ferrario}, F. and Quadrelli, R. and
+                 {Risquez Martin}, A. and Rossi, S. and
+                 {Brandao De Melo}, J. and Oom, D. and Branco, A. and
+                 Solazzo, E. and Vignati, E.},
   title       = {{GHG} emissions of all world countries},
   number      = {JRC138862},
   institution = {Publications Office of the European Union},
@@ -85,7 +89,8 @@
   title        = {Mamba: Linear-time sequence modeling with selective state
                   spaces},
   howpublished = {arXiv:2312.00752},
-  year         = {2023}
+  year         = {2023},
+  url          = {https://arxiv.org/abs/2312.00752}
 }
 
 % ---- Huang (2025) -- Li-Mamba ---------------------------------------------
@@ -144,7 +149,8 @@
                {Transformers}},
   booktitle = {International Conference on Learning Representations
                (ICLR 2023)},
-  year      = {2023}
+  year      = {2023},
+  url       = {https://arxiv.org/abs/2211.14730}
 }
 
 % ---- Olalde-Verano et al. (2024) -- SambaMixer ----------------------------
@@ -167,7 +173,8 @@
   title        = {State of health estimation of batteries using a
                   time-informed dynamic sequence-inverted transformer},
   howpublished = {arXiv:2507.18320},
-  year         = {2025}
+  year         = {2025},
+  doi          = {10.48550/arXiv.2507.18320}
 }
 
 % ---- Perez et al. (2018) -- FiLM -----------------------------------------
@@ -198,7 +205,8 @@
 @misc{saha2007,
   author       = {Saha, B. and Goebel, K.},
   title        = {Battery data set},
-  howpublished = {NASA Ames Prognostics Data Repository},
+  howpublished = {NASA Ames Prognostics Data Repository, NASA Ames Research
+                  Center, Moffett Field, CA},
   year         = {2007},
   url          = {https://ti.arc.nasa.gov/tech/dash/groups/pcoe/prognostic-data-repository/}
 }

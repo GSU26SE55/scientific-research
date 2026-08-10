@@ -12,8 +12,7 @@
 \usepackage{textcomp}           % \textdegree, \textcelsius, ...
 
 % ---- Math ------------------------------------------------------------------
-\usepackage{amsmath,amssymb,amsfonts}
-\usepackage{bm}                 % bold math symbols
+\usepackage{amsmath,amssymb}
 
 % ---- Graphics & figures ----------------------------------------------------
 \usepackage{graphicx}
@@ -25,36 +24,23 @@
 % The `float' package provides the [H] specifier, which pins a table/figure at
 % the exact point in the source where it is written (like an inline object in
 % Word), instead of letting LaTeX float it to the top/bottom of another page.
-% We use [H] for every float so the manuscript's table/figure order and
-% position match the reference Word document one-to-one. `float' only adds the
-% [H] specifier here (no \restylefloat), so the LNCS caption layout is intact.
+% Every float uses [H] so that the manuscript's table/figure order and position
+% match the reference Word document (Nckh-official_2.docx) one-to-one.
+% `float' only adds the [H] specifier here (no \restylefloat), so the LNCS
+% caption layout is intact.
 \usepackage{float}
 
-% ---- Float packing ---------------------------------------------------------
-% This paper is float-heavy (6 tables + 2 figures). LaTeX's default placement
-% heuristics leave large slack (they cap floats at 70 % of a page and reserve
-% 20 % for text), which inflates the page count. The parameters below let
-% floats pack more densely. They only affect *placement*, not the page geometry
-% or type area defined by llncs.cls, so the Springer layout is preserved.
-\renewcommand{\topfraction}{0.9}       % up to 90 % of a page top may be floats
-\renewcommand{\bottomfraction}{0.8}
-\renewcommand{\textfraction}{0.07}     % require only 7 % text on a mixed page
-\renewcommand{\floatpagefraction}{0.75}% a float-only page must be >=75 % full
-\setcounter{topnumber}{3}
-\setcounter{bottomnumber}{2}
-\setcounter{totalnumber}{4}
-% Trim the (generous) default space between a float and the body text. This is
-% a modest, uniform reduction to recover the whitespace LaTeX leaves around the
-% paper's 8 floats; it does not alter the type area or line spacing.
-% Because every float uses the [H] specifier (exact in-text placement), the
-% only separation that applies is \intextsep (above/below an in-text float);
-% keeping it tight lets the fixed-position tables sit close to their prose.
+% ---- Float spacing ---------------------------------------------------------
+% This paper is float-heavy (6 tables + 2 figures). Trim the (generous) default
+% space between a float and the body text -- a modest, uniform reduction that
+% recovers whitespace without altering the type area or line spacing.
+% Because every float uses [H] (exact in-text placement), the separation that
+% actually applies is \intextsep.
 \setlength{\textfloatsep}{9pt plus 2pt minus 2pt}
-\setlength{\intextsep}{4pt plus 2pt minus 2pt}
+\setlength{\intextsep}{5pt plus 2pt minus 2pt}
 \setlength{\floatsep}{8pt plus 2pt minus 2pt}
 % llncs sets \belowcaptionskip = 10pt (the gap under each caption -- above the
-% body for tables, below the image for figures). Trim it uniformly to recover
-% whitespace around the paper's 8 captions without touching the type area.
+% body for tables, below the image for figures). Trim it uniformly.
 \setlength{\belowcaptionskip}{6pt}
 
 % ---- Bottom alignment ------------------------------------------------------
@@ -62,39 +48,81 @@
 % on any page that a fixed-position ([H]) float leaves short, producing large
 % gaps distributed between paragraphs. \raggedbottom instead lets that slack
 % collect naturally at the foot of the page -- exactly how a word processor
-% leaves whitespace when a table does not fit -- so the layout reads cleanly.
+% leaves whitespace when a table does not fit.
 \raggedbottom
 
 % ---- Tables ----------------------------------------------------------------
 % Table layout follows the Springer LNCS samplepaper.tex: ruled tables with
-% vertical bars and \hline (caption placed ABOVE the table). No booktabs.
+% vertical bars and \hline, caption placed ABOVE the table. No booktabs.
 \usepackage{array}
 \usepackage{tabularx}
-\usepackage{ragged2e}           % \RaggedRight inside p/X columns
 
-% New column types used by the wide comparison tables.
-\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
-\newcolumntype{C}[1]{>{\Centering\arraybackslash}p{#1}}
-\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
+% ---- Cell alignment --------------------------------------------------------
+% Every cell of every table in the reference Word manuscript is centred on BOTH
+% axes: each <w:tc> carries w:vAlign="center", and the paragraphs inside are
+% centred horizontally.  The column types below reproduce that.
+%
+% Horizontal: plain \centering, NOT ragged2e's \Centering (which is why the
+%   ragged2e package is no longer loaded).  \Centering gives the cell margins
+%   only 2em of stretch and a zero \parfillskip, so the last line of a cell has
+%   to come out nearly full width; that re-breaks the two wide comparison
+%   tables into extra lines and costs a whole page.  Plain \centering uses
+%   infinitely stretchable margin glue instead -- see \tabtight below for the
+%   two line-breaking parameters that glue makes necessary.  \arraybackslash
+%   restores the meaning of \\ as a row separator inside the cell.
+% Vertical:   a p-column is TOP-aligned, an m-column is VERTICALLY CENTRED, so
+%   every fixed-width column uses m{...} rather than p{...}.
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+
+% tabularx builds its X columns from \tabularxcolumn, which defaults to p{...}
+% (top-aligned).  Redefining it to m{...} makes the elastic X columns centre
+% vertically as well, so Y below is centred on both axes like M.
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
 
 % Layout helpers for the wide comparison tables. The LNCS text block is only
 % 12.2 cm wide, so multi-column tables need reduced inter-column padding and
-% permissive hyphenation inside p/X columns to avoid overfull boxes.
+% permissive hyphenation inside the m/X columns to avoid overfull boxes.
 %   \tabtight  -- narrow padding, aggressive line breaking (wide tables)
 %   \tabairy   -- extra padding (narrow tables, keeps headers from touching)
+%
+% \pretolerance and \linepenalty are what keep the CENTRED cells as tightly set
+% as the old ragged-right ones (see "Cell alignment" above):
+%   * centred cells use infinitely stretchable margin glue, so every line has
+%     badness 0 and TeX's first line-breaking pass always succeeds -- and that
+%     pass never hyphenates. \pretolerance=-1 skips it so the hyphenating
+%     second pass always runs;
+%   * that same glue makes every line equally "good", so a hyphen and an extra
+%     line cost TeX the same 100 demerits and it has no reason to prefer the
+%     hyphen. A large \linepenalty makes each extra line far dearer.
+% Dropping either one costs the wide tables ~20pt of height and the paper an
+% extra page.
 \newcommand{\tabtight}{%
   \setlength{\tabcolsep}{3pt}%
   \hyphenpenalty=10 \exhyphenpenalty=10 \tolerance=9999
+  \pretolerance=-1 \linepenalty=1000
   \emergencystretch=1em\relax}
 \newcommand{\tabairy}{\setlength{\tabcolsep}{9pt}}
 
 % Two-line (stacked) table header, e.g. \hd{MAE}{(\%)} -- keeps wide numeric
-% headers from dictating the column width.
-\newcommand{\hd}[2]{\begin{tabular}[b]{@{}c@{}}\textbf{#1}\\\textbf{#2}\end{tabular}}
+% headers from dictating the column width.  The nested tabular is aligned [c]
+% (not [b]) so the stacked header sits vertically centred against the one-line
+% headers next to it, instead of dropping them to the bottom of the row.
+\newcommand{\hd}[2]{\begin{tabular}[c]{@{}c@{}}\textbf{#1}\\\textbf{#2}\end{tabular}}
 
-% ---- Units & numbers -------------------------------------------------------
-\usepackage{siunitx}
-\sisetup{detect-all, group-digits = false}
+% ---- Notes underneath a table ----------------------------------------------
+% The reference Word manuscript prints a source line under Tables 1, 3, 4, 5
+% and 6 ("Source: ...").  \srcnote reproduces it, left-aligned and in a smaller
+% size, immediately below the table body.
+%
+% >>> Springer LNCS proceedings do NOT normally carry a "Source:" line under a
+% >>> table. To drop all of them in one edit (without touching the sections),
+% >>> replace the definition below with:   \newcommand{\srcnote}[1]{}
+\newcommand{\srcnote}[1]{%
+  \par\vspace{2pt}%
+  \noindent\begin{minipage}{\linewidth}%
+    \setlength{\parindent}{0pt}\footnotesize\raggedright #1%
+  \end{minipage}\par}
 
 % ---- URLs & hyperlinks -----------------------------------------------------
 \usepackage{url}
@@ -135,18 +163,9 @@
 \setlength{\emergencystretch}{1.5em}
 
 % ---- Custom commands -------------------------------------------------------
-\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
 \newcommand{\eg}{\textit{e.g.,}\xspace}
 \newcommand{\ie}{\textit{i.e.,}\xspace}
 \newcommand{\etal}{\textit{et al.}\xspace}
 
-% Degree Celsius, written consistently throughout the paper: 4\degC
+% Degree Celsius, written consistently throughout the paper: \degC{4} -> 4 <deg>C
 \newcommand{\degC}[1]{\ensuremath{#1\,^{\circ}}C\xspace}
-
-% Left-aligned explanatory note underneath a table (e.g. symbol footnotes).
-% The minipage keeps the text flush-left even inside a centred table float.
-\newcommand{\tabnote}[1]{%
-  \par\vspace{2pt}%
-  \noindent\begin{minipage}{\linewidth}%
-    \setlength{\parindent}{0pt}\small\raggedright #1%
-  \end{minipage}\par}
